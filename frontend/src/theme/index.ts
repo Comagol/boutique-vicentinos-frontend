@@ -1,50 +1,55 @@
-import { extendTheme } from "@chakra-ui/react";
+import { createSystem, defaultConfig } from "@chakra-ui/react";
 
-const fonts = {
-  heading: "Poppins, sans-serif",
-  body: "Inter, system-ui, sans-serif",
-};
-
-const colors = {
-  brand: {
-    900: "#0B1F3A",
-    700: "#123B65",
-    500: "#1F7A8C",
-    300: "#40A9AA",
-    100: "#D5F5F6",
+const customConfig = {
+  theme: {
+    tokens: {
+      colors: {
+        brand: {
+          900: { value: "#0B1F3A" },
+          700: { value: "#123B65" },
+          500: { value: "#1F7A8C" },
+          300: { value: "#40A9AA" },
+          100: { value: "#D5F5F6" },
+        },
+        accent: {
+          500: { value: "#F28F3B" },
+          400: { value: "#F6A85E" },
+        },
+        background: {
+          surface: { value: "#F2F4F7" },
+          dim: { value: "#E5E9F0" },
+        },
+        text: {
+          primary: { value: "#0B1F3A" },
+          secondary: { value: "#374151" },
+          muted: { value: "#6B7280" },
+        },
+      },
+      radii: {
+        sm: { value: "8px" },
+        md: { value: "12px" },
+        lg: { value: "16px" },
+      },
+      shadows: {
+        md: { value: "0 10px 30px rgba(15, 23, 42, 0.08)" },
+      },
+    },
+    semanticTokens: {
+      colors: {
+        "bg.surface": { value: "{colors.background.surface}" },
+        "bg.dim": { value: "{colors.background.dim}" },
+        "text.primary": { value: "{colors.text.primary}" },
+        "text.secondary": { value: "{colors.text.secondary}" },
+        "text.muted": { value: "{colors.text.muted}" },
+      },
+    },
   },
-  accent: {
-    500: "#F28F3B",
-    400: "#F6A85E",
-  },
-  background: {
-    surface: "#F2F4F7",
-    dim: "#E5E9F0",
-  },
-  text: {
-    primary: "#0B1F3A",
-    secondary: "#374151",
-    muted: "#6B7280",
-  },
-};
-
-const radii = {
-  sm: "8px",
-  md: "12px",
-  lg: "16px",
-};
-
-const shadows = {
-  md: "0 10px 30px rgba(15, 23, 42, 0.08)",
-};
-
-const styles = {
-  global: {
+  globalCss: {
     body: {
-      bg: "background.surface",
+      bg: "bg.surface",
       color: "text.primary",
     },
   },
 };
 
-export const theme = extendTheme({ fonts, colors, radii, shadows, styles });
+export const system = createSystem(defaultConfig, customConfig);
