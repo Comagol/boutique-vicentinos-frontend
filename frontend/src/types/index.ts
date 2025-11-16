@@ -99,3 +99,23 @@ export interface AdminUser {
   lastLogin: string;
   isActive: boolean;
 }
+
+// ========= Common response Types =====
+export interface ApiError {
+  error: string;
+  message: string;
+}
+
+export interface ApiSuccess<T> {
+  message: string;
+  [key: string]: any;
+}
+
+// ======== CART Types (Solo frontend) ==========
+// elcarrito no se envia asi al backend se transforma a OrderItem[]
+export interface CartItem {
+  product: Product;
+  size: string;
+  color: string;
+  quantity: number;
+}
