@@ -71,3 +71,17 @@ export interface OrderItem {
   price: number;
   reservedStock: boolean;
 }
+
+export interface Order {
+  id: string;
+  orderNumber: string;
+  customerInfo: CustomerInfo;
+  items: OrderItem[];
+  status: OrderStatus;
+  total: number;
+  paymentMethod: string;
+  paymentId?: string;
+  createdAt: string;
+  updatedAt: string;
+  expiresAt: string;
+}
