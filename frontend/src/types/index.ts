@@ -85,3 +85,17 @@ export interface Order {
   updatedAt: string;
   expiresAt: string;
 }
+
+// ========== admin types ===========
+export type AdminRole = "admin";
+
+export interface AdminUser {
+  id: string;
+  email: string;
+  name: string;
+  role: AdminRole;
+  createdAt: string;
+  updatedAt: string;
+  lastLogin: string;
+  isActive: boolean;
+}
