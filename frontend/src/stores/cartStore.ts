@@ -1,37 +1,111 @@
 import { create } from "zustand";
-
-type CartItem = {
-  productId: string;
-  quantity: number;
-};
+import type { CartItem, Product } from "../types";
 
 type CartState = {
   items: CartItem[];
-  addItem: (item: CartItem) => void;
-  removeItem: (productId: string) => void;
+  addItem: (product: Product, size: string, color: string, quantity?: number) => void;
+  removeItem: (productId: string, size: string, color: string) => void;
+  updateQuantity: (productId: string, size: string, color: string, quantity: number) => void;
   clear: () => void;
+  getTotal: () => number;
+  getItemCount: () => number;
 };
 
-export const useCartStore = create<CartState>((set) => ({
+export const useCartStore = create<CartState>((set, get) => ({
   items: [],
-  addItem: (item: CartItem) =>
+  
+  // Agregar item al carrito
+  addItem: (product: Product, size: string, color: string, quantity: number = 1) =>
     set((state: CartState) => {
-      const existing = state.items.find((i: CartItem) => i.productId === item.productId);
-      if (existing) {
+      // Buscar si ya existe este item con misma talla y color
+      const existingIndex = state.items.findIndex(
+        (item) =>
+          item.product.id === product.id &&
+          item.size === size &&
+          item.color === color
+      );
+
+      if (existingIndex !== -1) {
+        // Si existe, sumar la cantidad
+        const updatedItems = [...state.items];
+        updatedItems[existingIndex] = {
+          ...updatedItems[existingIndex],
+          quantity: updatedItems[existingIndex].quantity + quantity,
+        };
+        return { items: updatedItems };
+      }
+
+      // Si no existe, agregarlo
+      return {
+        items: [
+          ...state.items,
+          {
+            product,
+            size,
+            color,
+            quantity,
+          },
+        ],
+      };
+    }),
+
+  // Remover item específico (por productId + size + color)
+  removeItem: (productId: string, size: string, color: string) =>
+    set((state: CartState) => ({
+      items: state.items.filter(
+        (item) =>
+          !(
+            item.product.id === productId &&
+            item.size === size &&
+            item.color === color
+          )
+      ),
+    })),
+
+  // Actualizar cantidad de un item específico
+  updateQuantity: (productId: string, size: string, color: string, quantity: number) =>
+    set((state: CartState) => {
+      if (quantity <= 0) {
+        // Si la cantidad es 0 o menor, eliminar el item
         return {
-          items: state.items.map((i: CartItem) =>
-            i.productId === item.productId
-              ? { ...i, quantity: i.quantity + item.quantity }
-              : i
+          items: state.items.filter(
+            (item) =>
+              !(
+                item.product.id === productId &&
+                item.size === size &&
+                item.color === color
+              )
           ),
         };
       }
-      return { items: [...state.items, item] };
-    }),
-  removeItem: (productId: string) =>
-    set((state: CartState) => ({
-      items: state.items.filter((i: CartItem) => i.productId !== productId),
-    })),
-  clear: () => set({ items: [] }),
-}));
 
+      // Actualizar la cantidad
+      return {
+        items: state.items.map((item) =>
+          item.product.id === productId &&
+          item.size === size &&
+          item.color === color
+            ? { ...item, quantity }
+            : item
+        ),
+      };
+    }),
+
+  // Limpiar todo el carrito
+  clear: () => set({ items: [] }),
+
+  // Calcular el total del carrito
+  getTotal: () => {
+    const { items } = get();
+    return items.reduce((total, item) => {
+      const price = item.product.discountPrice || item.product.price;
+      return total + price * item.quantity;
+    }, 0);
+  },
+
+  // Contar total de items (sumando cantidades)
+  getItemCount: () => {
+    const { items } = get();
+    return items.reduce((count, item) => count + item.quantity, 0);
+  },
+}));
