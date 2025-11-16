@@ -47,3 +47,27 @@ export interface Product {
   createdAt: string;
   updatedAt: string;
 }
+
+// =========== ORDER TYPES ============
+export type OrderStatus = 
+| "pending-payment"
+| "payment-confirmed"
+| "manually-canceled"
+| "cancelled-by-time"
+| "delivered"
+
+export interface CustomerInfo {
+  name: string;
+  email: string;
+  phone: string;
+}
+
+export interface OrderItem {
+  productId: string;
+  productName: string;
+  size: string;
+  color: string;
+  quantity: number;
+  price: number;
+  reservedStock: boolean;
+}
