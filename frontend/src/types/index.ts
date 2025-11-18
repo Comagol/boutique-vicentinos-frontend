@@ -41,7 +41,7 @@ export interface Product {
   discountPrice?: number;
   images: string[];
   sizes: ProductSize[];
-  colorts: string[];
+  colors: string[];
   stock: StockInfo[];
   isActive: boolean;
   createdAt: string;
