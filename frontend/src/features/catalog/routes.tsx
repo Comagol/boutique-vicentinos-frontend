@@ -1,6 +1,5 @@
 import { Route } from "react-router-dom";
-
-const CatalogPage = () => <div>Catalog coming soon</div>;
+import { CatalogPage } from "./pages/CatalogPage";
 
 export const CatalogRoutes = (
   <>
