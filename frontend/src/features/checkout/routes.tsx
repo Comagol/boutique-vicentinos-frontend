@@ -1,6 +1,5 @@
 import { Route } from "react-router-dom";
-
-const CheckoutPage = () => <div>Checkout coming soon</div>;
+import { CheckoutPage } from "./pages/CheckoutPage";
 
 export const CheckoutRoutes = (
   <Route path="checkout" element={<CheckoutPage />} />

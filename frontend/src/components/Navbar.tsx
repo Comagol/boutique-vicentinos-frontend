@@ -24,28 +24,28 @@ export function Navbar() {
           </Text>
           </Link>
           <Box position="relative">
-    <Link to="/checkout">
-  <IconButton 
-    aria-label="Carrito" 
-    _hover={{ color: "brand.700" }} 
-    _active={{ color: "brand.900" }} 
-    variant="ghost"
-  >
-    <FaShoppingCart />
-  </IconButton>
-  {itemCount > 0 && (
-    <Badge
-      position="absolute"
-      top="-6px"
-      right="-6px"
-      colorPalette="red"
-      borderRadius="full"
-    >
-      {itemCount}
-    </Badge>
-  )}
-  </Link>
-</Box>
+            <Link to="/checkout">
+              <IconButton 
+                aria-label="Carrito" 
+                _hover={{ color: "brand.700" }} 
+                _active={{ color: "brand.900" }} 
+                variant="ghost"
+              >
+                <FaShoppingCart />
+              </IconButton>
+            </Link>
+            {itemCount > 0 && (
+              <Badge
+                position="absolute"
+                top="-6px"
+                right="-6px"
+                colorPalette="red"
+                borderRadius="full"
+              >
+                {itemCount}
+              </Badge>
+            )}
+          </Box>
         </HStack>
       </Flex>
     </Box>
