@@ -1,6 +1,5 @@
 import { Route } from "react-router-dom";
-
-const ProductDetailPage = () => <div>Product detail coming soon</div>;
+import { ProductDetailPage } from "./pages/ProductDetailPage";
 
 export const ProductDetailRoutes = (
   <Route path="product/:productId" element={<ProductDetailPage />} />
