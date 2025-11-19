@@ -10,6 +10,19 @@ export async function getProducts(): Promise<Product[]> {
   return mockProducts;
 }
 
+// Función para obtener un producto por ID
+export async function getProductById(id: string): Promise<Product> {
+  // Por ahora buscamos en los mockProducts
+  // TODO: Reemplazar con llamada real al backend: GET /api/products/:id
+  const product = mockProducts.find((p) => p.id === id);
+  
+  if (!product) {
+    throw new Error(`Producto con ID ${id} no encontrado`);
+  }
+  
+  return product;
+}
+
 // Datos mock temporales (los reemplazarás cuando tengas el backend)
 const mockProducts: Product[] = [
   {
