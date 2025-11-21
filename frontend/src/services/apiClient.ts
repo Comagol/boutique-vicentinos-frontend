@@ -12,3 +12,8 @@ export const saveAuthToken = (token: string): void => {
   localStorage.setItem("auth_token", token);
 };
 
+//FUNCION HELPER PARA ELIMINAR EL TOKEN
+export const removeAuthToken = (): void => {
+  localStorage.removeItem("auth_token");
+};
+
