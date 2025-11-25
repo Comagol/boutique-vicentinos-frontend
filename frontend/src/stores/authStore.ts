@@ -55,5 +55,4 @@ export const useAuthStrore = create<AuthState>()(
       }),
     }
   ),
-  
 )
