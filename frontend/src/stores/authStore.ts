@@ -12,3 +12,48 @@ interface AuthState {
   initialize: () => void;
 }
 
+export const useAuthStrore = create<AuthState>()(
+  persist(
+    (set) => ({
+      admin: null,
+      token: null,
+      isAuthenticated: false,
+
+      login: async (email: string, password: string) => {
+        const response = await authService.login({ email, password });
+        set({
+          admin: response.admin,
+          token: response.token,
+          isAuthenticated: true,
+        });
+      },
+
+      logout: () => {
+        authService.logout();
+        set({
+          admin: null,
+          token: null,
+          isAuthenticated: false,
+        });
+      },
+
+      initialize: () => {
+        const token = localStorage.getItem("auth_token");
+        if (token && authService.isAuthenticated()) {
+          set({
+            token: token,
+            isAuthenticated: true,
+          });
+        }
+      },
+    }),
+    {
+      name: "auth-storage",
+      partialize: (state) => ({
+        token: state.token,
+        isAuthenticated: state.isAuthenticated,
+      }),
+    }
+  ),
+  
+)
