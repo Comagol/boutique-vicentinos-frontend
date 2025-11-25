@@ -91,8 +91,6 @@ export function CheckoutPage() {
         }
       }
     } catch (error) {
-      console.error("Error al procesar pedido:", error);
-      
       // Mostrar error al usuario
       const errorMessage =
         (error as ApiError).message || "Error al procesar el pedido. Por favor, intenta nuevamente.";

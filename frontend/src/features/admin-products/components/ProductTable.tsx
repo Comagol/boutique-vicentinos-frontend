@@ -117,9 +117,28 @@ export function ProductTable({ products, onRefresh }: ProductTableProps) {
           <Box as="tbody">
             {products.map((product) => {
               // Asegurar que stock sea un array antes de usar reduce
-              const stockArray = Array.isArray(product.stock) ? product.stock : [];
+              // Puede venir como string JSON desde el backend
+              let stockArray: any[] = [];
+              if (Array.isArray(product.stock)) {
+                stockArray = product.stock;
+              } else if (typeof product.stock === 'string') {
+                try {
+                  const parsed = JSON.parse(product.stock);
+                  stockArray = Array.isArray(parsed) ? parsed : [];
+                } catch (e) {
+                  stockArray = [];
+                }
+              } else if (product.stock) {
+                // Si es otro tipo de objeto, intentar convertirlo
+                stockArray = [];
+              }
+              
+              // Calcular total, asegurándonos de que quantity sea un número
               const totalStock = stockArray.reduce(
-                (sum, s) => sum + s.quantity,
+                (sum: number, s: any) => {
+                  const quantity = typeof s.quantity === 'number' ? s.quantity : Number(s.quantity) || 0;
+                  return sum + quantity;
+                },
                 0
               );
               const displayPrice = product.discountPrice || product.price;
