@@ -1,6 +1,5 @@
 import { Route } from "react-router-dom";
-
-const AdminProductsPage = () => <div>Admin products coming soon</div>;
+import { AdminProductsPage } from "./pages/AdminProductsPage";
 
 export const AdminProductsRoutes = (
   <>
