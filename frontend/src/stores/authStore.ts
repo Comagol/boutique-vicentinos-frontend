@@ -12,7 +12,7 @@ interface AuthState {
   initialize: () => void;
 }
 
-export const useAuthStrore = create<AuthState>()(
+export const useAuthStore = create<AuthState>()(
   persist(
     (set) => ({
       admin: null,
