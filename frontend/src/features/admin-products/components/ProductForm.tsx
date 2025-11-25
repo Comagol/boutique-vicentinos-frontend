@@ -62,18 +62,34 @@ export function ProductForm({
     baseColor: initialData?.baseColor || "",
     price: initialData?.price?.toString() || "",
     discountPrice: initialData?.discountPrice?.toString() || "",
-    tags: initialData?.tags || [],
-    sizes: initialData?.sizes || [],
-    colors: initialData?.colors || [],
-    stock: initialData?.stock || [],
+    tags: Array.isArray(initialData?.tags) ? initialData.tags : [],
+    sizes: Array.isArray(initialData?.sizes) ? initialData.sizes : [],
+    colors: Array.isArray(initialData?.colors) ? initialData.colors : [],
+    stock: Array.isArray(initialData?.stock) ? initialData.stock : [],
   });
 
-  // Cargar imágenes existentes si estamos editando
+  // Actualizar formData cuando initialData cambie (para edición)
   useEffect(() => {
-    if (isEdit && initialData?.images) {
-      setImagePreviews(initialData.images);
+    if (initialData) {
+      setFormData({
+        name: initialData.name || "",
+        description: initialData.description || "",
+        category: initialData.category || "otros",
+        baseColor: initialData.baseColor || "",
+        price: initialData.price?.toString() || "",
+        discountPrice: initialData.discountPrice?.toString() || "",
+        tags: Array.isArray(initialData.tags) ? initialData.tags : [],
+        sizes: Array.isArray(initialData.sizes) ? initialData.sizes : [],
+        colors: Array.isArray(initialData.colors) ? initialData.colors : [],
+        stock: Array.isArray(initialData.stock) ? initialData.stock : [],
+      });
+
+      // Cargar imágenes existentes si estamos editando
+      if (Array.isArray(initialData.images)) {
+        setImagePreviews(initialData.images);
+      }
     }
-  }, [isEdit, initialData]);
+  }, [initialData]);
 
   const handleInputChange = (
     field: keyof FormDataState,
@@ -396,7 +412,7 @@ export function ProductForm({
                 <FiPlus />
               </Button>
             </HStack>
-            {formData.tags.length > 0 && (
+            {Array.isArray(formData.tags) && formData.tags.length > 0 && (
               <HStack gap={2} flexWrap="wrap">
                 {formData.tags.map((tag) => (
                   <Badge key={tag} borderRadius="md" p={2}>
@@ -450,7 +466,7 @@ export function ProductForm({
               </Button>
             </HStack>
 
-            {formData.sizes.length > 0 && (
+            {Array.isArray(formData.sizes) && formData.sizes.length > 0 && (
               <VStack gap={2} align="stretch">
                 {formData.sizes.map((sizeObj, index) => (
                   <HStack key={index} justify="space-between" p={2} bg="gray.50" borderRadius="md">
@@ -495,7 +511,7 @@ export function ProductForm({
                 <FiPlus />
               </Button>
             </HStack>
-            {formData.colors.length > 0 && (
+            {Array.isArray(formData.colors) && formData.colors.length > 0 && (
               <HStack gap={2} flexWrap="wrap">
                 {formData.colors.map((color) => (
                   <Badge key={color} borderRadius="md" p={2}>
@@ -517,7 +533,7 @@ export function ProductForm({
         </Box>
 
         {/* Stock */}
-        {formData.sizes.length > 0 && (
+        {Array.isArray(formData.sizes) && formData.sizes.length > 0 && (
           <Box bg="white" borderRadius="md" p={6} shadow="sm">
             <Heading size="md" mb={4} color="text.primary">
               Stock
@@ -529,7 +545,7 @@ export function ProductForm({
                     Talla: {sizeObj.size} ({sizeObj.type})
                   </Text>
                   <VStack gap={2} align="stretch" ml={4}>
-                    {formData.colors.length > 0 ? (
+                    {Array.isArray(formData.colors) && formData.colors.length > 0 ? (
                       formData.colors.map((color) => (
                         <HStack key={color} gap={2}>
                           <Text fontSize="sm" minW="100px">
