@@ -42,26 +42,30 @@ export function ProductDetailPage() {
   // Store del carrito
   const addItem = useCartStore((state) => state.addItem);
 
+  // Asegurar que los arrays sean arrays válidos
+  const stockArray = product && Array.isArray(product.stock) ? product.stock : [];
+  const colorsArray = product && Array.isArray(product.colors) ? product.colors : [];
+  const imagesArray = product && Array.isArray(product.images) ? product.images : [];
+  const sizesArray = product && Array.isArray(product.sizes) ? product.sizes : [];
+
   // Calcular stock disponible para la talla/color seleccionados
-  const availableStock = product
-    ? product.stock.filter(
-        (s) =>
-          s.size === selectedSize &&
-          (selectedColor ? s.color === selectedColor : true)
-      ).reduce((sum, s) => sum + s.quantity, 0)
-    : 0;
+  const availableStock = stockArray
+    .filter(
+      (s) =>
+        s.size === selectedSize &&
+        (selectedColor ? s.color === selectedColor : true)
+    )
+    .reduce((sum, s) => sum + s.quantity, 0);
 
   // Obtener colores disponibles para la talla seleccionada
-  const availableColorsForSize = product
-    ? Array.from(
-        new Set(
-          product.stock
-            .filter((s) => s.size === selectedSize)
-            .map((s) => s.color)
-            .filter((c): c is string => !!c)
-        )
-      )
-    : [];
+  const availableColorsForSize = Array.from(
+    new Set(
+      stockArray
+        .filter((s) => s.size === selectedSize)
+        .map((s) => s.color)
+        .filter((c): c is string => !!c)
+    )
+  );
 
   // Handler para agregar al carrito
   const handleAddToCart = () => {
@@ -78,7 +82,7 @@ export function ProductDetailPage() {
       return;
     }
 
-    if (product.colors.length > 0 && !selectedColor) {
+    if (colorsArray.length > 0 && !selectedColor) {
       toast.create({
         title: "Selecciona un color",
         description: "Selecciona un color para agregar el producto al carrito",
@@ -157,7 +161,7 @@ export function ProductDetailPage() {
               shadow="sm"
             >
               <Image
-                src={product.images[selectedImageIndex] || "/placeholder.jpg"}
+                src={imagesArray[selectedImageIndex] || "/placeholder.jpg"}
                 alt={product.name}
                 width="100%"
                 height="100%"
@@ -166,9 +170,9 @@ export function ProductDetailPage() {
             </Box>
 
             {/* Galería de miniaturas (si hay más de una imagen) */}
-            {product.images.length > 1 && (
+            {imagesArray.length > 1 && (
               <HStack gap={2} overflowX="auto">
-                {product.images.map((img, index) => (
+                {imagesArray.map((img, index) => (
                   <Box
                     key={index}
                     borderRadius="md"
@@ -271,7 +275,7 @@ export function ProductDetailPage() {
                   }}
                 >
                   <option value="">Selecciona una talla</option>
-                  {product.sizes.map((sizeObj) => (
+                  {sizesArray.map((sizeObj) => (
                     <option key={sizeObj.size} value={sizeObj.size}>
                       {sizeObj.size} ({sizeObj.type})
                     </option>
@@ -281,7 +285,7 @@ export function ProductDetailPage() {
             </VStack>
 
             {/* Selector de color (solo si hay colores) */}
-            {product.colors.length > 0 && (
+            {colorsArray.length > 0 && (
               <VStack align="stretch" gap={2}>
                 <Text fontSize="sm" fontWeight="semibold">
                   Color {selectedColor && `(${selectedColor})`}
@@ -353,7 +357,7 @@ export function ProductDetailPage() {
                 !product.isActive ||
                 !selectedSize ||
                 availableStock === 0 ||
-                (product.colors.length > 0 && !selectedColor)
+                (colorsArray.length > 0 && !selectedColor)
               }
             >
               {!product.isActive

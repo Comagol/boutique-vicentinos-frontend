@@ -188,28 +188,14 @@ export function ProductForm({
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    // Validaciones básicas
-    if (!formData.name.trim()) {
-      alert("El nombre es requerido");
-      return;
-    }
-    if (!formData.price || parseFloat(formData.price) <= 0) {
-      alert("El precio debe ser mayor a 0");
-      return;
-    }
-    if (formData.sizes.length === 0) {
-      alert("Debes agregar al menos una talla");
-      return;
-    }
-
-    // Preparar datos del formulario
+    // Preparar datos del formulario (sin validaciones, el backend se encarga)
     const productFormData = {
-      name: formData.name.trim(),
-      description: formData.description.trim(),
+      name: formData.name,
+      description: formData.description,
       category: formData.category,
-      baseColor: formData.baseColor.trim() || undefined,
+      baseColor: formData.baseColor || undefined,
       tags: formData.tags,
-      price: parseFloat(formData.price),
+      price: formData.price ? parseFloat(formData.price) : 0,
       discountPrice: formData.discountPrice
         ? parseFloat(formData.discountPrice)
         : undefined,
@@ -256,7 +242,6 @@ export function ProductForm({
                 value={formData.name}
                 onChange={(e) => handleInputChange("name", e.target.value)}
                 placeholder="Ej: Camiseta Titular 2024"
-                required
               />
             </VStack>
 
@@ -320,7 +305,6 @@ export function ProductForm({
                   value={formData.price}
                   onChange={(e) => handleInputChange("price", e.target.value)}
                   placeholder="0.00"
-                  required
                 />
               </VStack>
 

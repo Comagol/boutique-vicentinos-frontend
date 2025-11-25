@@ -116,11 +116,14 @@ export function ProductTable({ products, onRefresh }: ProductTableProps) {
           </Box>
           <Box as="tbody">
             {products.map((product) => {
-              const totalStock = product.stock.reduce(
+              // Asegurar que stock sea un array antes de usar reduce
+              const stockArray = Array.isArray(product.stock) ? product.stock : [];
+              const totalStock = stockArray.reduce(
                 (sum, s) => sum + s.quantity,
                 0
               );
               const displayPrice = product.discountPrice || product.price;
+              const imagesArray = Array.isArray(product.images) ? product.images : [];
 
               return (
                 <Box
@@ -132,7 +135,7 @@ export function ProductTable({ products, onRefresh }: ProductTableProps) {
                 >
                   <Box as="td" px={4} py={3}>
                     <Image
-                      src={product.images[0] || "/placeholder.jpg"}
+                      src={imagesArray[0] || "/placeholder.jpg"}
                       alt={product.name}
                       width="60px"
                       height="60px"
