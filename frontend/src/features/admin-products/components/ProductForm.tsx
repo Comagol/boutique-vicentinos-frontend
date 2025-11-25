@@ -15,7 +15,7 @@ import {
 } from "@chakra-ui/react";
 import { useState, useEffect } from "react";
 import type { ChangeEvent } from "react";
-import type { Product, ProductCategory, ProductSize, StockInfo } from "../../../types";
+import type { Product, ProductCategory, StockInfo } from "../../../types";
 import { FiX, FiPlus, FiTrash2 } from "react-icons/fi";
 
 interface ProductFormProps {
@@ -283,7 +283,6 @@ export function ProductForm({
                     onChange={(e: ChangeEvent<HTMLSelectElement>) =>
                       handleInputChange("category", e.target.value as ProductCategory)
                     }
-                    required
                   >
                     {categories.map((cat) => (
                       <option key={cat} value={cat}>
