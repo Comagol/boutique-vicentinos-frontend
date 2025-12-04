@@ -37,11 +37,17 @@ export function AdminOrdersPage() {
 
   // Filtrar por término de búsqueda (número de orden, email, nombre)
   const filteredOrders = orders.filter((order) => {
+    if (!searchTerm) return true;
+    
     const searchLower = searchTerm.toLowerCase();
+    const orderNumber = (order.orderNumber || "").toLowerCase();
+    const customerEmail = (order.customerInfo?.email || "").toLowerCase();
+    const customerName = (order.customerInfo?.name || "").toLowerCase();
+    
     return (
-      order.orderNumber.toLowerCase().includes(searchLower) ||
-      order.customerInfo.email.toLowerCase().includes(searchLower) ||
-      order.customerInfo.name.toLowerCase().includes(searchLower)
+      orderNumber.includes(searchLower) ||
+      customerEmail.includes(searchLower) ||
+      customerName.includes(searchLower)
     );
   });
 

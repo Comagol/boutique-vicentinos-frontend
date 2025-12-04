@@ -13,7 +13,7 @@ import {
   FiTruck,
   FiEye,
   FiDollarSign,
-  FiTrash2,
+  FiXCircle,
 } from "react-icons/fi";
 
 const toast = createToaster({ placement: "top-end" });
@@ -279,117 +279,132 @@ export function OrderTable({ orders, onRefresh }: OrderTableProps) {
             </Box>
           </Box>
           <Box as="tbody">
-            {orders.map((order) => (
-              <Box
-                as="tr"
-                key={order.id}
-                _hover={{ bg: "gray.50" }}
-                borderBottom="1px solid"
-                borderColor="gray.200"
-              >
-                <Box as="td" px={4} py={3}>
-                  <Text fontWeight="semibold" color="brand.700">
-                    #{order.orderNumber}
-                  </Text>
-                </Box>
-                <Box as="td" px={4} py={3}>
-                  <VStack align="start" gap={0}>
-                    <Text fontWeight="semibold">{order.customerInfo.name}</Text>
-                    <Text fontSize="xs" color="text.muted">
-                      {order.customerInfo.email}
+            {orders.map((order) => {
+              // Validaciones defensivas para evitar errores
+              const customerInfo = order.customerInfo || {
+                name: "N/A",
+                email: "N/A",
+                phone: "N/A",
+              };
+              const itemsArray = Array.isArray(order.items) ? order.items : [];
+              const orderNumber = order.orderNumber || "N/A";
+              const total = typeof order.total === "number" ? order.total : 0;
+              const paymentMethod = order.paymentMethod || "N/A";
+              const status = order.status || "pending-payment";
+              const createdAt = order.createdAt || new Date().toISOString();
+
+              return (
+                <Box
+                  as="tr"
+                  key={order.id}
+                  _hover={{ bg: "gray.50" }}
+                  borderBottom="1px solid"
+                  borderColor="gray.200"
+                >
+                  <Box as="td" px={4} py={3}>
+                    <Text fontWeight="semibold" color="brand.700">
+                      #{orderNumber}
                     </Text>
-                    <Text fontSize="xs" color="text.muted">
-                      {order.customerInfo.phone}
+                  </Box>
+                  <Box as="td" px={4} py={3}>
+                    <VStack align="start" gap={0}>
+                      <Text fontWeight="semibold">{customerInfo.name}</Text>
+                      <Text fontSize="xs" color="text.muted">
+                        {customerInfo.email}
+                      </Text>
+                      <Text fontSize="xs" color="text.muted">
+                        {customerInfo.phone}
+                      </Text>
+                    </VStack>
+                  </Box>
+                  <Box as="td" px={4} py={3}>
+                    <Text fontSize="sm">
+                      {itemsArray.length} producto{itemsArray.length !== 1 ? "s" : ""}
                     </Text>
-                  </VStack>
-                </Box>
-                <Box as="td" px={4} py={3}>
-                  <Text fontSize="sm">
-                    {order.items.length} producto{order.items.length !== 1 ? "s" : ""}
-                  </Text>
-                </Box>
-                <Box as="td" px={4} py={3}>
-                  <Text fontWeight="semibold">
-                    ${order.total.toLocaleString("es-AR")}
-                  </Text>
-                </Box>
-                <Box as="td" px={4} py={3}>
-                  <Text fontSize="sm" color="text.secondary">
-                    {order.paymentMethod === "cash" ? "Efectivo" : "Mercado Pago"}
-                  </Text>
-                </Box>
-                <Box as="td" px={4} py={3}>
-                  <Badge
-                    colorPalette={getStatusColor(order.status)}
-                    borderRadius="md"
-                  >
-                    {getStatusLabel(order.status)}
-                  </Badge>
-                </Box>
-                <Box as="td" px={4} py={3}>
-                  <Text fontSize="sm" color="text.muted">
-                    {formatDate(order.createdAt)}
-                  </Text>
-                </Box>
-                <Box as="td" px={4} py={3}>
-                  <HStack gap={2}>
-                    {/* Ver detalles (pendiente) */}
-                    <IconButton
-                      aria-label="Ver detalles"
-                      size="sm"
-                      variant="ghost"
-                      onClick={() => {
-                        // TODO: Abrir modal de detalles
-                      }}
+                  </Box>
+                  <Box as="td" px={4} py={3}>
+                    <Text fontWeight="semibold">
+                      ${total.toLocaleString("es-AR")}
+                    </Text>
+                  </Box>
+                  <Box as="td" px={4} py={3}>
+                    <Text fontSize="sm" color="text.secondary">
+                      {paymentMethod === "cash" ? "Efectivo" : "Mercado Pago"}
+                    </Text>
+                  </Box>
+                  <Box as="td" px={4} py={3}>
+                    <Badge
+                      colorPalette={getStatusColor(status)}
+                      borderRadius="md"
                     >
-                      <FiEye />
-                    </IconButton>
-
-                    {/* Confirmar pago en efectivo (solo si está pendiente y es efectivo) */}
-                    {order.status === "pending-payment" &&
-                      order.paymentMethod === "cash" && (
-                        <IconButton
-                          aria-label="Confirmar pago"
-                          size="sm"
-                          variant="ghost"
-                          color="green.500"
-                          onClick={() => handleConfirmCashPayment(order)}
-                        >
-                          <FiDollarSign />
-                        </IconButton>
-                      )}
-
-                    {/* Marcar como entregado (solo si el pago está confirmado) */}
-                    {order.status === "payment-confirmed" && (
+                      {getStatusLabel(status)}
+                    </Badge>
+                  </Box>
+                  <Box as="td" px={4} py={3}>
+                    <Text fontSize="sm" color="text.muted">
+                      {formatDate(createdAt)}
+                    </Text>
+                  </Box>
+                  <Box as="td" px={4} py={3}>
+                    <HStack gap={2}>
+                      {/* Ver detalles (pendiente) */}
                       <IconButton
-                        aria-label="Marcar como entregado"
+                        aria-label="Ver detalles"
                         size="sm"
                         variant="ghost"
-                        color="blue.500"
-                        onClick={() => handleMarkAsDelivered(order)}
+                        onClick={() => {
+                          // TODO: Abrir modal de detalles
+                        }}
                       >
-                        <FiTruck />
+                        <FiEye />
                       </IconButton>
-                    )}
 
-                    {/* Cancelar (solo si no está cancelado ni entregado) */}
-                    {order.status !== "delivered" &&
-                      order.status !== "manually-canceled" &&
-                      order.status !== "cancelled-by-time" && (
+                      {/* Confirmar pago en efectivo (solo si está pendiente y es efectivo) */}
+                      {status === "pending-payment" &&
+                        paymentMethod === "cash" && (
+                          <IconButton
+                            aria-label="Confirmar pago"
+                            size="sm"
+                            variant="ghost"
+                            color="green.500"
+                            onClick={() => handleConfirmCashPayment(order)}
+                          >
+                            <FiDollarSign />
+                          </IconButton>
+                        )}
+
+                      {/* Marcar como entregado (solo si el pago está confirmado) */}
+                      {status === "payment-confirmed" && (
                         <IconButton
-                          aria-label="Cancelar pedido"
+                          aria-label="Marcar como entregado"
                           size="sm"
                           variant="ghost"
-                          color="red.500"
-                          onClick={() => handleCancelOrder(order)}
+                          color="blue.500"
+                          onClick={() => handleMarkAsDelivered(order)}
                         >
-                          <FiTrash2 />
+                          <FiTruck />
                         </IconButton>
                       )}
-                  </HStack>
+
+                      {/* Cancelar (solo si no está cancelado ni entregado) */}
+                      {status !== "delivered" &&
+                        status !== "manually-canceled" &&
+                        status !== "cancelled-by-time" && (
+                          <IconButton
+                            aria-label="Cancelar pedido"
+                            size="sm"
+                            variant="ghost"
+                            color="red.500"
+                            onClick={() => handleCancelOrder(order)}
+                          >
+                            <FiXCircle />
+                          </IconButton>
+                        )}
+                    </HStack>
+                  </Box>
                 </Box>
-              </Box>
-            ))}
+              );
+            })}
           </Box>
         </Box>
       </Box>
