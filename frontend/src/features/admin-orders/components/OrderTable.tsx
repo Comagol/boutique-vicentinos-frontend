@@ -84,30 +84,38 @@ export function OrderTable({ orders, onRefresh }: OrderTableProps) {
   const handleConfirmCashPayment = async (order: Order) => {
     if (
       !confirm(
-        `¿Confirmar el pago en efectivo para el pedido #${order.orderNumber}?`
+        `¿Confirmar el pago en efectivo para el pedido #${order.orderNumber}?\n\nEl estado cambiará a "Pago confirmado" y podrás marcarlo como entregado después.`
       )
     ) {
       return;
     }
 
     try {
-      // Para pagos en efectivo, no necesitamos paymentId
-      // El backend debería aceptar esto, si no, ajustaremos después
-      await ordersService.confirmPayment(order.id, "");
+      // Intentar primero con el método específico para efectivo
+      // Si no existe, usar el método genérico con paymentId vacío
+      try {
+        await ordersService.confirmCashPayment(order.id);
+      } catch (cashError) {
+        // Fallback: usar el método genérico si el específico no existe
+        await ordersService.confirmPayment(order.id, "cash_payment");
+      }
       
       toast.create({
         title: "Pago confirmado",
-        description: `El pago del pedido #${order.orderNumber} ha sido confirmado`,
+        description: `El pago del pedido #${order.orderNumber} ha sido confirmado. El estado ahora es "Pago confirmado".`,
         type: "success",
-        duration: 2000,
+        duration: 3000,
       });
+      
+      // Refrescar la lista para mostrar el nuevo estado
       onRefresh();
     } catch (error) {
+      const errorMessage = (error as any)?.message || "Error desconocido";
       toast.create({
         title: "Error al confirmar pago",
-        description: "No se pudo confirmar el pago. Intenta nuevamente.",
+        description: `No se pudo confirmar el pago: ${errorMessage}`,
         type: "error",
-        duration: 3000,
+        duration: 4000,
       });
     }
   };

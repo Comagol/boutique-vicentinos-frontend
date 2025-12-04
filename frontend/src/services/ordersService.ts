@@ -113,6 +113,17 @@ export const ordersService = {
     return response.order;
   },
 
+  // POST /api/orders/confirm-cash-payment (admin - confirmar pago en efectivo)
+  confirmCashPayment: async (orderId: string): Promise<Order> => {
+    const response = await apiClient.post<OrderResponse>(
+      "/orders/confirm-cash-payment",
+      {
+        orderId,
+      }
+    );
+    return response.order;
+  },
+
   // POST /api/orders/mark-delivered (admin)
   markAsDelivered: async (orderId: string): Promise<Order> => {
     const response = await apiClient.post<OrderResponse>(
