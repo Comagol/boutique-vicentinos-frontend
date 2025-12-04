@@ -26,10 +26,14 @@ export function PaymentOptions({
         </Heading>
 
         <RadioGroup.Root
-          value={paymentMethod ? [paymentMethod] : []}
+          value={paymentMethod}
           onValueChange={(e) => {
-            if (e.value && e.value.length > 0) {
-              onPaymentMethodChange(e.value[0]);
+            if (e.value) {
+              // e.value puede ser un array o un string dependiendo de la implementación
+              const selectedValue = Array.isArray(e.value) ? e.value[0] : e.value;
+              if (selectedValue) {
+                onPaymentMethodChange(selectedValue);
+              }
             }
           }}
         >
