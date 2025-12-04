@@ -41,8 +41,10 @@ export function AdminOrdersPage() {
     
     const searchLower = searchTerm.toLowerCase();
     const orderNumber = (order.orderNumber || "").toLowerCase();
-    const customerEmail = (order.customerInfo?.email || "").toLowerCase();
-    const customerName = (order.customerInfo?.name || "").toLowerCase();
+    // El backend puede devolver 'customer' o 'customerInfo'
+    const customer = order.customerInfo || (order as any).customer;
+    const customerEmail = (customer?.email || "").toLowerCase();
+    const customerName = (customer?.name || "").toLowerCase();
     
     return (
       orderNumber.includes(searchLower) ||

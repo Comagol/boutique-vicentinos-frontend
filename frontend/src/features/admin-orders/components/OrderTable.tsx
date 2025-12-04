@@ -291,7 +291,8 @@ export function OrderTable({ orders, onRefresh }: OrderTableProps) {
           <Box as="tbody">
             {orders.map((order) => {
               // Validaciones defensivas para evitar errores
-              const customerInfo = order.customerInfo || {
+              // El backend puede devolver 'customer' o 'customerInfo'
+              const customerInfo = (order.customerInfo || (order as any).customer) || {
                 name: "N/A",
                 email: "N/A",
                 phone: "N/A",
