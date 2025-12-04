@@ -93,9 +93,11 @@ export function ProductCard({ product }: ProductCardProps) {
           }}
           disabled={!product.isActive || product.stock.length === 0}
         >
-          {product.isActive && product.stock.length > 0
-            ? "Ver Detalle"
-            : "No disponible"}
+          <Link to={`/product/${product.id}`}>
+            {product.isActive && product.stock.length > 0
+              ? "Ver Detalle"
+              : "No disponible"}
+          </Link>
         </CTAButton>
       </VStack>
     </Box>
