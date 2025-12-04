@@ -66,13 +66,14 @@ export const AdminLayout = () => {
               Pedidos
             </Button>
             </Link>
-            <Button
-              variant="ghost"
-              justifyContent="start"
-            >
-              Volver al Sitio
-            </Button>
-            
+            <Link to="/">
+              <Button
+                variant="ghost"
+                justifyContent="start"
+              >
+                Volver a la tienda
+              </Button>
+            </Link>
             <Box mt="auto" pt={4}>
               <Separator mb={4} />
               <Button
