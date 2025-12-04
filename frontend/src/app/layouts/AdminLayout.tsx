@@ -4,7 +4,7 @@ import { useAuthStore } from "../../stores/authStore";
 
 export const AdminLayout = () => {
   const navigate = useNavigate();
-  const { admin, logout, isAuthenticated } = useAuthStore();
+  const { admin, logout } = useAuthStore();
 
   const handleLogout = () => {
     logout();
