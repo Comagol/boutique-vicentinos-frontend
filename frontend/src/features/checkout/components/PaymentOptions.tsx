@@ -26,7 +26,7 @@ export function PaymentOptions({
         </Heading>
 
         <RadioGroup.Root
-          value={paymentMethod}
+          value={paymentMethod ? [paymentMethod] : []}
           onValueChange={(e) => {
             if (e.value && e.value.length > 0) {
               onPaymentMethodChange(e.value[0]);
@@ -42,7 +42,7 @@ export function PaymentOptions({
                   <VStack align="start" gap={0}>
                     <Text fontWeight="semibold">Efectivo</Text>
                     <Text fontSize="sm" color="text.muted">
-                      Pagarás al recibir el producto
+                      Pagarás al retirar el producto
                     </Text>
                   </VStack>
                 </HStack>
