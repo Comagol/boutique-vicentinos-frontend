@@ -1,8 +1,6 @@
 import { Route } from "react-router-dom";
-
-const AdminOrdersPage = () => <div>Admin orders coming soon</div>;
+import { AdminOrdersPage } from "./pages/AdminOrdersPage";
 
 export const AdminOrdersRoutes = (
   <Route path="orders" element={<AdminOrdersPage />} />
 );
-
