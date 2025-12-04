@@ -6,6 +6,7 @@ import {
   IconButton,
   VStack
 } from "@chakra-ui/react";
+import { useState } from "react";
 import { ordersService } from "../../../services/ordersService";
 import { createToaster } from "@chakra-ui/react";
 import type { Order, OrderStatus } from "../../../types";
@@ -15,6 +16,7 @@ import {
   FiDollarSign,
   FiXCircle,
 } from "react-icons/fi";
+import { OrderDetailModal } from "./OrderDetailModal";
 
 const toast = createToaster({ placement: "top-end" });
 
@@ -71,6 +73,14 @@ const formatDate = (dateString: string): string => {
 };
 
 export function OrderTable({ orders, onRefresh }: OrderTableProps) {
+  const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const handleViewDetails = (order: Order) => {
+    setSelectedOrder(order);
+    setIsModalOpen(true);
+  };
+
   const handleConfirmCashPayment = async (order: Order) => {
     if (
       !confirm(
@@ -347,14 +357,12 @@ export function OrderTable({ orders, onRefresh }: OrderTableProps) {
                   </Box>
                   <Box as="td" px={4} py={3}>
                     <HStack gap={2}>
-                      {/* Ver detalles (pendiente) */}
+                      {/* Ver detalles */}
                       <IconButton
                         aria-label="Ver detalles"
                         size="sm"
                         variant="ghost"
-                        onClick={() => {
-                          // TODO: Abrir modal de detalles
-                        }}
+                        onClick={() => handleViewDetails(order)}
                       >
                         <FiEye />
                       </IconButton>
@@ -408,6 +416,16 @@ export function OrderTable({ orders, onRefresh }: OrderTableProps) {
           </Box>
         </Box>
       </Box>
+
+      {/* Modal de detalles */}
+      <OrderDetailModal
+        order={selectedOrder}
+        isOpen={isModalOpen}
+        onClose={() => {
+          setIsModalOpen(false);
+          setSelectedOrder(null);
+        }}
+      />
     </Box>
   );
 }
