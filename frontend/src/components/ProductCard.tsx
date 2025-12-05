@@ -1,5 +1,5 @@
 import { Box, Image, VStack, Text, HStack, Badge } from "@chakra-ui/react";
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import type { Product } from "../types";
 import { CTAButton } from "./CTAButton";
 
@@ -8,18 +8,24 @@ interface ProductCardProps {
 }
 
 export function ProductCard({ product }: ProductCardProps) {
+  const navigate = useNavigate();
   // calculo los precios a mostrar (descuento o precio regular)
   const displayPrice = product.discountPrice || product.price;
   const hasDiscount = !!product.discountPrice;
 
+  const handleCardClick = () => {
+    navigate(`/product/${product.id}`);
+  };
+
   return (
-    <Link to={`/product/${product.id}`}>
     <Box
       bg="white"
       borderRadius="md"
       overflow="hidden"
       shadow="sm"
       transition="all 200ms ease"
+      cursor="pointer"
+      onClick={handleCardClick}
       _hover={{
         shadow: "md",
         transform: "translateY(-4px)",
@@ -84,23 +90,22 @@ export function ProductCard({ product }: ProductCardProps) {
         </HStack>
 
         {/* Botón de acción */}
-        <CTAButton
-          size="sm"
-          width="100%"
-          onClick={(e) => {
-            e.preventDefault();
-            // El link ya maneja la navegación, esto evita doble click
-          }}
-          disabled={!product.isActive || product.stock.length === 0}
-        >
-          <Link to={`/product/${product.id}`}>
+        <Box onClick={(e) => e.stopPropagation()}>
+          <CTAButton
+            size="sm"
+            width="100%"
+            onClick={(e) => {
+              e.stopPropagation();
+              navigate(`/product/${product.id}`);
+            }}
+            disabled={!product.isActive || product.stock.length === 0}
+          >
             {product.isActive && product.stock.length > 0
               ? "Ver Detalle"
               : "No disponible"}
-          </Link>
-        </CTAButton>
+          </CTAButton>
+        </Box>
       </VStack>
     </Box>
-    </Link>
   );
 }
