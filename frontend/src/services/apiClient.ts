@@ -40,32 +40,62 @@ async function apiRequest<T>(
   }
 
   try {
-    const response = await fetch(`${API_BASE_URL}${endpoint}`, {
+    const url = `${API_BASE_URL}${endpoint}`;
+    
+    const response = await fetch(url, {
       ...options,
       headers,
     });
 
-    const data = await response.json();
+    // Intentar parsear la respuesta
+    let data;
+    const contentType = response.headers.get("content-type");
+    
+    if (contentType && contentType.includes("application/json")) {
+      try {
+        data = await response.json();
+      } catch (parseError) {
+        const text = await response.text();
+        throw {
+          error: `HTTP ${response.status}`,
+          message: `Error al parsear respuesta del servidor: ${text.substring(0, 200)}`,
+        } as ApiError;
+      }
+    } else {
+      // Si no es JSON, leer como texto
+      const text = await response.text();
+      data = { message: text };
+    }
 
     if (!response.ok) {
       // Manejar errores de la API
       const error: ApiError = {
-        error: data.error || "Error desconocido",
-        message: data.message || "Ha ocurrido un error",
+        error: data.error || `HTTP ${response.status}`,
+        message: data.message || data.error || `Error ${response.status}: ${response.statusText}`,
       };
       throw error;
     }
 
     return data;
   } catch (error) {
+    // Si ya es un ApiError, re-lanzarlo
+    if (error && typeof error === "object" && "error" in error && "message" in error) {
+      throw error;
+    }
+    
     // Manejar errores de red u otros
     if (error instanceof TypeError) {
       throw {
         error: "NetworkError",
-        message: "Error de conexión con el servidor",
+        message: `No se pudo conectar al servidor en ${API_BASE_URL}. Verifica que el backend esté corriendo.`,
       } as ApiError;
     }
-    throw error;
+    
+    // Error desconocido
+    throw {
+      error: "UnknownError",
+      message: error instanceof Error ? error.message : "Ha ocurrido un error desconocido",
+    } as ApiError;
   }
 }
 

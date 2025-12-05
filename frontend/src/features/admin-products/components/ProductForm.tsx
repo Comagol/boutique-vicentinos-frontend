@@ -174,8 +174,11 @@ export function ProductForm({
     color: string | undefined,
     quantity: number
   ) => {
+    // Normalizar: convertir undefined a null para evitar problemas con JSON
+    const normalizedColor = color || null;
+    
     const stockIndex = formData.stock.findIndex(
-      (s) => s.size === size && s.color === color
+      (s) => s.size === size && (s.color === normalizedColor || (s.color === undefined && normalizedColor === null))
     );
 
     if (stockIndex >= 0) {
@@ -183,13 +186,13 @@ export function ProductForm({
       if (quantity <= 0) {
         newStock.splice(stockIndex, 1);
       } else {
-        newStock[stockIndex] = { ...newStock[stockIndex], quantity };
+        newStock[stockIndex] = { ...newStock[stockIndex], color: normalizedColor, quantity };
       }
       handleInputChange("stock", newStock);
     } else if (quantity > 0) {
       handleInputChange("stock", [
         ...formData.stock,
-        { size, color, quantity },
+        { size, color: normalizedColor, quantity },
       ]);
     }
   };

@@ -53,8 +53,21 @@ export const productsService = {
   createProduct: async (productData: CreateProductInput, images?: File[]): Promise<Product> => {
     const formData = new FormData();
 
+    // Limpiar el stock: asegurar que color no sea undefined
+    const cleanedStock = productData.stock?.map(item => ({
+      size: item.size,
+      color: item.color, 
+      quantity: item.quantity,
+    })) || [];
+
+    // Preparar datos limpios
+    const cleanedData = {
+      ...productData,
+      stock: cleanedStock,
+    };
+
     // Agregar campos del producto al FormData
-    Object.entries(productData).forEach(([key, value]) => {
+    Object.entries(cleanedData).forEach(([key, value]) => {
       if (key === "images") return; // Las imágenes se manejan aparte
       
       if (Array.isArray(value)) {
