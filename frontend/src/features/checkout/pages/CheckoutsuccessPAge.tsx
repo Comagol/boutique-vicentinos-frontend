@@ -106,7 +106,7 @@ export function CheckoutSuccessPage() {
                 </>
               )}
 
-              {paymentMethod === "mercado_pago" && (
+              {paymentMethod === "mercadopago" && (
                 <>
                   <Box borderTop="1px solid" borderColor="gray.200" />
                   <VStack gap={2} align="center">

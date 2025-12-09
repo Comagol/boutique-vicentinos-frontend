@@ -5,6 +5,7 @@ import type {
   CustomerInfo,
   OrderStatus,
   CartItem,
+  PaymentStatusResponse,
 } from "../types";
 
 interface OrdersResponse {
@@ -64,6 +65,16 @@ export const ordersService = {
       `/orders/number/${orderNumber}`
     );
     return response.order;
+  },
+
+  // GET /api/orders/:orderId/payment-status (público)
+  getPaymentStatus: async (orderId: string): Promise<PaymentStatusResponse> => {
+    const response = await apiClient.get<PaymentStatusResponse>(
+      `/orders/${orderId}/payment-status`
+    );
+    // The API returns PaymentStatusResponse directly (with message property)
+    // We return it as PaymentStatusResponse since it contains all required fields
+    return response as unknown as PaymentStatusResponse;
   },
 
   // POST /api/orders/cancel (público)

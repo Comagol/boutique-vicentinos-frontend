@@ -54,7 +54,13 @@ export type OrderStatus =
 | "payment-confirmed"
 | "manually-canceled"
 | "cancelled-by-time"
-| "delivered"
+| "delivered";
+
+export type PaymentStatus = 
+| "pending"
+| "approved"
+| "rejected"
+| "cancelled";
 
 export interface CustomerInfo {
   name: string;
@@ -75,15 +81,31 @@ export interface OrderItem {
 export interface Order {
   id: string;
   orderNumber: string;
-  customerInfo: CustomerInfo;
+  customer: CustomerInfo; // Nota: backend usa "customer" no "customerInfo"
   items: OrderItem[];
   status: OrderStatus;
   total: number;
   paymentMethod: string;
   paymentId?: string;
+  paymentStatus?: PaymentStatus;
+  paymentStatusDetail?: string;
+  paymentDate?: string;
+  preferenceId?: string;
   createdAt: string;
   updatedAt: string;
-  expiresAt: string;
+  expiresAt?: string;
+}
+
+// Respuesta del endpoint de estado de pago
+export interface PaymentStatusResponse {
+  orderId: string;
+  orderStatus: OrderStatus;
+  paymentId?: string;
+  paymentStatus?: PaymentStatus;
+  paymentStatusDetail?: string;
+  transactionAmount?: number;
+  dateCreated?: string;
+  dateApproved?: string;
 }
 
 // ========== admin types ===========

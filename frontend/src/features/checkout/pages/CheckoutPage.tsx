@@ -41,6 +41,8 @@ export function CheckoutPage() {
     setIsSubmitting(true);
 
     try {
+      console.log("Creando orden con:", { customerInfo, items, paymentMethod }); // Debug
+      
       // Crear pedido en el backend
       const response = await ordersService.createOrder(
         customerInfo,
@@ -48,7 +50,12 @@ export function CheckoutPage() {
         paymentMethod
       );
 
+      console.log("Respuesta completa del backend:", response); // Debug
+
       const { order, paymentUrl } = response;
+
+      console.log("Order extraída:", order); // Debug
+      console.log("PaymentUrl extraída:", paymentUrl); // Debug
 
       if (paymentMethod === "cash") {
         // Pedido en efectivo: limpiar carrito y redirigir a página de éxito
@@ -68,32 +75,47 @@ export function CheckoutPage() {
             orderId: order.id,
           },
         });
-      } else if (paymentMethod === "mercado_pago") {
+      } else if (paymentMethod === "mercadopago") {
         // Mercado Pago: redirigir a la URL de pago
-        if (paymentUrl) {
-          // Limpiar carrito antes de redirigir
-          clear();
-          
-          toast.create({
-            title: "Redirigiendo a Mercado Pago",
-            description: "Serás redirigido para completar el pago",
-            type: "info",
-            duration: 2000,
-          });
-
-          // Pequeño delay para que el usuario vea el mensaje
-          setTimeout(() => {
-            window.location.href = paymentUrl;
-          }, 1500);
-        } else {
+        if (!paymentUrl) {
           // Si no hay paymentUrl, algo salió mal
-          throw new Error("No se recibió URL de pago de Mercado Pago");
+          console.error("No se recibió paymentUrl en la respuesta:", response);
+          throw new Error("No se recibió URL de pago de Mercado Pago. Por favor, contacta con soporte.");
         }
+
+        if (!order || !order.orderNumber) {
+          console.error("No se recibió order u orderNumber en la respuesta:", response);
+          throw new Error("Error al crear la orden. Por favor, intenta nuevamente.");
+        }
+
+        // Guardar orderNumber en localStorage para consultas posteriores
+        localStorage.setItem("lastOrderNumber", order.orderNumber);
+        localStorage.setItem("lastOrderId", order.id);
+        
+        // Limpiar carrito antes de redirigir
+        clear();
+        
+        console.log("Redirigiendo a Mercado Pago:", paymentUrl); // Debug
+        
+        toast.create({
+          title: "Redirigiendo a Mercado Pago",
+          description: "Serás redirigido para completar el pago",
+          type: "info",
+          duration: 2000,
+        });
+
+        // Redirigir inmediatamente (sin delay para evitar problemas)
+        window.location.href = paymentUrl;
       }
     } catch (error) {
+      // Log del error para debugging
+      console.error("Error al crear orden:", error);
+      
       // Mostrar error al usuario
       const errorMessage =
-        (error as ApiError).message || "Error al procesar el pedido. Por favor, intenta nuevamente.";
+        (error as ApiError).message || 
+        (error as Error)?.message || 
+        "Error al procesar el pedido. Por favor, intenta nuevamente.";
       
       toast.create({
         title: "Error al procesar pedido",
@@ -146,7 +168,7 @@ export function CheckoutPage() {
                 >
                   {paymentMethod === "cash"
                     ? "Confirmar Pedido"
-                    : paymentMethod === "mercado_pago"
+                    : paymentMethod === "mercadopago"
                     ? "Ir a Mercado Pago"
                     : "Continuar"}
                 </Button>

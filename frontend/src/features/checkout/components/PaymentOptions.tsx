@@ -26,7 +26,7 @@ export function PaymentOptions({
       icon: FaMoneyBillWave,
     },
     {
-      id: "mercado_pago",
+      id: "mercadopago",
       label: "Mercado Pago",
       description: "Pagarás con tarjeta o transferencia",
       icon: FaCreditCard,
