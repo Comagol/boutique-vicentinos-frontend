@@ -22,3 +22,6 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+INTEGRACION_MERCADOPAGO_FRONTEND.md
+MERCADOPAGO_INTEGRATION.md
