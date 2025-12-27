@@ -58,14 +58,20 @@ export function ProductDetailPage() {
     .reduce((sum, s) => sum + s.quantity, 0);
 
   // Obtener colores disponibles para la talla seleccionada
-  const availableColorsForSize = Array.from(
-    new Set(
-      stockArray
-        .filter((s) => s.size === selectedSize)
-        .map((s) => s.color)
-        .filter((c): c is string => !!c)
+  const availableColorsForSize = selectedSize 
+    ? Array.from(
+      new Set(
+        stockArray
+          .filter((s) => {
+            const sizeMatch = String(s.size || "").trim() === String(selectedSize || "").trim();
+            const quantity = typeof s.quantity === "number" ? s.quantity : Number(s.quantity) || 0;
+            return sizeMatch && quantity > 0;
+          })
+          .map((s) => s.color)
+          .filter((c): c is string => !!c)
+      )
     )
-  );
+    : [];
 
 // Obtener talles disponibles: solo los que tienen stock en al menos un color
 const availableSizes = sizesArray.filter((sizeObj) => {
