@@ -24,13 +24,6 @@ export function CheckoutPage() {
   const [customerInfo, setCustomerInfo] = useState<CustomerInfo | null>(null);
   const [paymentMethod, setPaymentMethod] = useState<string>("");
   const [isSubmitting, setIsSubmitting] = useState(false);
-
-  // Si el carrito está vacío, redirigir al catálogo
-  if (items.length === 0) {
-    navigate("/");
-    return null;
-  }
-
   const total = getTotal();
 
   const handleSubmit = async () => {
