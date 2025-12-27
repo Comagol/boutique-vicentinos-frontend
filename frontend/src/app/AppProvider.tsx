@@ -5,7 +5,7 @@ import { useState } from "react";
 import { AppRouter } from "./AppRouter";
 import { system } from "../theme";
 
-const toaster = createToaster({ placement: "top-end" });
+export const toaster = createToaster({ placement: "top-end" });
 
 export const AppProvider = () => {
   const [queryClient] = useState(() => new QueryClient());
