@@ -18,11 +18,6 @@ export function Navbar() {
         </HStack>
 
         <HStack gap={3}>
-        <Link to="/admin">
-          <Text fontSize="sm" color="white">
-            Admin
-          </Text>
-        </Link>
           <Box position="relative">
             <Link to="/checkout">
               <IconButton 
