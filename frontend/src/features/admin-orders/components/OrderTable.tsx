@@ -8,7 +8,7 @@ import {
 } from "@chakra-ui/react";
 import { useState } from "react";
 import { ordersService } from "../../../services/ordersService";
-import { createToaster } from "@chakra-ui/react";
+import { toaster } from "../../../app/AppProvider";
 import type { Order, OrderStatus } from "../../../types";
 import {
   FiTruck,
@@ -17,8 +17,6 @@ import {
   FiXCircle,
 } from "react-icons/fi";
 import { OrderDetailModal } from "./OrderDetailModal";
-
-const toast = createToaster({ placement: "top-end" });
 
 interface OrderTableProps {
   orders: Order[];
@@ -100,7 +98,7 @@ export function OrderTable({ orders, onRefresh }: OrderTableProps) {
         await ordersService.confirmPayment(order.id, "cash_payment");
       }
       
-      toast.create({
+      toaster.create({
         title: "Pago confirmado",
         description: `El pago del pedido #${order.orderNumber} ha sido confirmado. El estado ahora es "Pago confirmado".`,
         type: "success",
@@ -111,7 +109,7 @@ export function OrderTable({ orders, onRefresh }: OrderTableProps) {
       onRefresh();
     } catch (error) {
       const errorMessage = (error as any)?.message || "Error desconocido";
-      toast.create({
+      toaster.create({
         title: "Error al confirmar pago",
         description: `No se pudo confirmar el pago: ${errorMessage}`,
         type: "error",
@@ -131,7 +129,7 @@ export function OrderTable({ orders, onRefresh }: OrderTableProps) {
 
     try {
       await ordersService.markAsDelivered(order.id);
-      toast.create({
+      toaster.create({
         title: "Pedido marcado como entregado",
         description: `El pedido #${order.orderNumber} ha sido marcado como entregado`,
         type: "success",
@@ -139,7 +137,7 @@ export function OrderTable({ orders, onRefresh }: OrderTableProps) {
       });
       onRefresh();
     } catch (error) {
-      toast.create({
+      toaster.create({
         title: "Error",
         description: "No se pudo marcar como entregado. Intenta nuevamente.",
         type: "error",
@@ -159,7 +157,7 @@ export function OrderTable({ orders, onRefresh }: OrderTableProps) {
 
     try {
       await ordersService.cancelOrder(order.id);
-      toast.create({
+      toaster.create({
         title: "Pedido cancelado",
         description: `El pedido #${order.orderNumber} ha sido cancelado`,
         type: "success",
@@ -167,7 +165,7 @@ export function OrderTable({ orders, onRefresh }: OrderTableProps) {
       });
       onRefresh();
     } catch (error) {
-      toast.create({
+      toaster.create({
         title: "Error al cancelar",
         description: "No se pudo cancelar el pedido. Intenta nuevamente.",
         type: "error",

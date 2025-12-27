@@ -5,9 +5,7 @@ import { useQuery } from "@tanstack/react-query";
 import { ProductForm } from "../components/ProductForm";
 import { productsService } from "../../../services/productService";
 import { useQueryClient } from "@tanstack/react-query";
-import { createToaster } from "@chakra-ui/react";
-
-const toast = createToaster({ placement: "top-end" });
+import { toaster } from "../../../app/AppProvider";
 
 export function EditProductPage() {
   const navigate = useNavigate();
@@ -32,7 +30,7 @@ export function EditProductPage() {
     try {
       await productsService.updateProduct(productId, productData, images);
       
-      toast.create({
+      toaster.create({
         title: "¡Producto actualizado!",
         description: `"${productData.name}" ha sido actualizado exitosamente`,
         type: "success",
@@ -45,7 +43,7 @@ export function EditProductPage() {
       
       navigate("/admin");
     } catch (error) {
-      toast.create({
+      toaster.create({
         title: "Error al actualizar producto",
         description: error instanceof Error ? error.message : "Error desconocido",
         type: "error",

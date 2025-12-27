@@ -20,10 +20,8 @@ import {
   FaMoneyBillWave,
 } from "react-icons/fa";
 import { ordersService } from "../../../services/ordersService";
-import { createToaster } from "@chakra-ui/react";
+import { toaster } from "../../../app/AppProvider";
 import type { Order, PaymentStatusResponse } from "../../../types";
-
-const toast = createToaster({ placement: "top-end" });
 
 export function OrderDetailPage() {
   const { orderId, orderNumber: orderNumberParam } = useParams<{ 
@@ -72,7 +70,7 @@ export function OrderDetailPage() {
         err.message || "Error al cargar los detalles de la orden";
       setError(errorMessage);
       
-      toast.create({
+      toaster.create({
         title: "Error",
         description: errorMessage,
         type: "error",
@@ -94,7 +92,7 @@ export function OrderDetailPage() {
         setPolling(false);
         await loadOrder();
         
-        toast.create({
+        toaster.create({
           title: "¡Pago confirmado!",
           description: "Tu pago ha sido aprobado exitosamente",
           type: "success",
@@ -108,7 +106,7 @@ export function OrderDetailPage() {
         setPolling(false);
         await loadOrder();
         
-        toast.create({
+        toaster.create({
           title: "Pago rechazado",
           description: "El pago fue rechazado o cancelado",
           type: "error",
@@ -140,7 +138,7 @@ export function OrderDetailPage() {
         clearInterval(pollInterval);
         setPolling(false);
         
-        toast.create({
+        toaster.create({
           title: "Pago pendiente",
           description:
             "El pago está pendiente de confirmación. Te notificaremos cuando se confirme.",

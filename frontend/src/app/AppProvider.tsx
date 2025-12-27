@@ -32,7 +32,7 @@ export const AppProvider = () => {
                 borderColor={`${colorPalette}.500`}
                 borderRadius="md"
                 p={4}
-                shadow="md"
+                shadow="lg"
                 minW="300px"
                 maxW="400px"
                 mb={3}

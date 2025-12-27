@@ -10,8 +10,7 @@ import {
   NativeSelect,
   Spinner,
   Badge,
-  Flex,
-  createToaster,
+  Flex
 } from "@chakra-ui/react";
 import type { ChangeEvent } from "react";
 import { useParams, useNavigate } from "react-router-dom";
@@ -19,8 +18,7 @@ import { useState } from "react";
 import { useProductDetail } from "../useProductDetail";
 import { useCartStore } from "../../../stores/cartStore";
 import { CTAButton } from "../../../components/CTAButton";
-
-const toast = createToaster({ placement: "top-end" });
+import { toaster } from "../../../app/AppProvider";
 
 export function ProductDetailPage() {
   const { productId } = useParams<{ productId: string }>();
@@ -93,7 +91,7 @@ const availableSizes = sizesArray.filter((sizeObj) => {
 
     // Validaciones
     if (!selectedSize) {
-      toast.create({
+      toaster.create({
         title: "Selecciona una talla",
         description: "Selecciona una talla para agregar el producto al carrito",
         type: "warning",
@@ -103,7 +101,7 @@ const availableSizes = sizesArray.filter((sizeObj) => {
     }
 
     if (colorsArray.length > 0 && !selectedColor) {
-      toast.create({
+      toaster.create({
         title: "Selecciona un color",
         description: "Selecciona un color para agregar el producto al carrito",
         type: "warning",
@@ -113,7 +111,7 @@ const availableSizes = sizesArray.filter((sizeObj) => {
     }
 
     if (availableStock < quantity) {
-      toast.create({
+      toaster.create({
         title: "Stock insuficiente",
         description: `Solo hay ${availableStock} disponible(s)`,
         type: "error",
@@ -125,7 +123,7 @@ const availableSizes = sizesArray.filter((sizeObj) => {
     // Agregar al carrito
     addItem(product, selectedSize, selectedColor || product.baseColor || "", quantity);
 
-    toast.create({
+    toaster.create({
         title: "Producto agregado al carrito",
         description: "Producto agregado al carrito correctamente",
         type: "success",

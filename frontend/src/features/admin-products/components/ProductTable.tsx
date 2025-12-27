@@ -9,11 +9,9 @@ import {
 } from "@chakra-ui/react";
 import { useNavigate } from "react-router-dom";
 import { productsService } from "../../../services/productService";
-import { createToaster } from "@chakra-ui/react";
+import { toaster } from "../../../app/AppProvider";
 import type { Product } from "../../../types";
 import { FiEdit, FiTrash2, FiEye, FiEyeOff } from "react-icons/fi";
-
-const toast = createToaster({ placement: "top-end" });
 
 interface ProductTableProps {
   products: Product[];
@@ -30,7 +28,7 @@ export function ProductTable({ products, onRefresh }: ProductTableProps) {
 
     try {
       await productsService.deleteProduct(productId);
-      toast.create({
+      toaster.create({
         title: "Producto eliminado",
         description: `"${productName}" ha sido eliminado permanentemente`,
         type: "success",
@@ -38,7 +36,7 @@ export function ProductTable({ products, onRefresh }: ProductTableProps) {
       });
       onRefresh();
     } catch (error) {
-      toast.create({
+      toaster.create({
         title: "Error al eliminar",
         description: "No se pudo eliminar el producto",
         type: "error",
@@ -51,7 +49,7 @@ export function ProductTable({ products, onRefresh }: ProductTableProps) {
     try {
       if (product.isActive) {
         await productsService.deactivateProduct(product.id);
-        toast.create({
+        toaster.create({
           title: "Producto desactivado",
           description: `"${product.name}" ya no se muestra en el catálogo`,
           type: "success",
@@ -59,7 +57,7 @@ export function ProductTable({ products, onRefresh }: ProductTableProps) {
         });
       } else {
         await productsService.activateProduct(product.id);
-        toast.create({
+        toaster.create({
           title: "Producto activado",
           description: `"${product.name}" ahora se muestra en el catálogo`,
           type: "success",
@@ -68,7 +66,7 @@ export function ProductTable({ products, onRefresh }: ProductTableProps) {
       }
       onRefresh();
     } catch (error) {
-      toast.create({
+      toaster.create({
         title: "Error",
         description: "No se pudo actualizar el estado del producto",
         type: "error",

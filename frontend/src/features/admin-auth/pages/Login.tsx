@@ -11,10 +11,8 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import type { ChangeEvent } from "react";
 import { useAuthStore } from "../../../stores/authStore";
-import { createToaster } from "@chakra-ui/react";
+import { toaster } from "../../../app/AppProvider";
 import type { ApiError } from "../../../types";
-
-const toast = createToaster({ placement: "top-end" });
 
 export function LoginPage() {
   const navigate = useNavigate();
@@ -68,7 +66,7 @@ export function LoginPage() {
     try {
       await login(formData.email, formData.password);
 
-      toast.create({
+      toaster.create({
         title: "¡Bienvenido!",
         description: "Has iniciado sesión correctamente",
         type: "success",
@@ -82,7 +80,7 @@ export function LoginPage() {
         (error as ApiError).message ||
         "Error al iniciar sesión. Verifica tus credenciales.";
 
-      toast.create({
+      toaster.create({
         title: "Error al iniciar sesión",
         description: errorMessage,
         type: "error",
