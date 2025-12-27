@@ -10,13 +10,11 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useCartStore } from "../../../stores/cartStore";
 import { ordersService } from "../../../services/ordersService";
-import { createToaster } from "@chakra-ui/react";
+import { toaster } from "../../../app/AppProvider";
 import type { CustomerInfo, ApiError } from "../../../types";
 import { CartSummary } from "../components/CartSummary";
 import { CustomerForm } from "../components/CustomerForm";
 import { PaymentOptions } from "../components/PaymentOptions";
-
-const toast = createToaster({ placement: "top-end" });
 
 export function CheckoutPage() {
   const navigate = useNavigate();
@@ -28,6 +26,12 @@ export function CheckoutPage() {
 
   const handleSubmit = async () => {
     if (!customerInfo || !paymentMethod) {
+      toaster.create({
+        title: "Error al procesar pedido",
+        description: "Por favor, complete todos los campos requeridos",
+        type: "error",
+        duration: 3000,
+      });
       return;
     }
 
@@ -54,7 +58,7 @@ export function CheckoutPage() {
         // Pedido en efectivo: limpiar carrito y redirigir a página de éxito
         clear();
         
-        toast.create({
+        toaster.create({
           title: "¡Pedido confirmado!",
           description: `Tu pedido #${order.orderNumber} ha sido creado exitosamente`,
           type: "success",
@@ -90,10 +94,10 @@ export function CheckoutPage() {
         
         console.log("Redirigiendo a Mercado Pago:", paymentUrl); // Debug
         
-        toast.create({
+        toaster.create({
           title: "Redirigiendo a Mercado Pago",
           description: "Serás redirigido para completar el pago",
-          type: "info",
+          type: "success",
           duration: 2000,
         });
 
@@ -110,7 +114,7 @@ export function CheckoutPage() {
         (error as Error)?.message || 
         "Error al procesar el pedido. Por favor, intenta nuevamente.";
       
-      toast.create({
+      toaster.create({
         title: "Error al procesar pedido",
         description: errorMessage,
         type: "error",
