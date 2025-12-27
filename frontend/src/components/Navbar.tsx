@@ -7,11 +7,11 @@ export function Navbar() {
   const itemCount = useCartStore((s) => s.getItemCount());
 
   return (
-    <Box as="header" bg="bg.surface" borderBottom="1px solid" borderColor="gray.200">
+    <Box as="header" bg="brand.900" borderBottom="1px solid" borderColor="brand.700">
       <Flex h={16} align="center" justify="space-between" maxW="1200px" mx="auto" px={4}>
         <HStack gap={4}>
           <Link to="/">
-          <Text fontWeight="bold" color="brand.700">
+          <Text fontWeight="bold" color="white">
             Boutique Vicentinos
           </Text>
           </Link>
@@ -19,17 +19,18 @@ export function Navbar() {
 
         <HStack gap={3}>
         <Link to="/admin">
-          <Text fontSize="sm" color="text.secondary">
+          <Text fontSize="sm" color="white">
             Admin
           </Text>
-          </Link>
+        </Link>
           <Box position="relative">
             <Link to="/checkout">
               <IconButton 
                 aria-label="Carrito" 
-                _hover={{ color: "brand.700" }} 
-                _active={{ color: "brand.900" }} 
+                _hover={{ color: "brand.500" }} 
+                _active={{ color: "brand.500" }} 
                 variant="ghost"
+                color="white"
               >
                 <FaShoppingCart />
               </IconButton>
