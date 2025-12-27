@@ -67,6 +67,20 @@ export function ProductDetailPage() {
     )
   );
 
+// Obtener talles disponibles: solo los que tienen stock en al menos un color
+const availableSizes = sizesArray.filter((sizeObj) => {
+  // Verificar si hay stock en al menos un color para esta talla
+  return stockArray.some((s) => {
+    // Normalizar comparación de strings (trim y case-insensitive si es necesario)
+    const sizeMatch = String(s.size || "").trim() === String(sizeObj.size || "").trim();
+    
+    // Asegurar que quantity sea un número y mayor a 0
+    const quantity = typeof s.quantity === "number" ? s.quantity : Number(s.quantity) || 0;
+    
+    return sizeMatch && quantity > 0;
+  });
+});
+
   // Handler para agregar al carrito
   const handleAddToCart = () => {
     if (!product) return;
@@ -275,7 +289,7 @@ export function ProductDetailPage() {
                   }}
                 >
                   <option value="">Selecciona una talla</option>
-                  {sizesArray.map((sizeObj) => (
+                  {availableSizes.map((sizeObj) => (
                     <option key={sizeObj.size} value={sizeObj.size}>
                       {sizeObj.size} ({sizeObj.type})
                     </option>
