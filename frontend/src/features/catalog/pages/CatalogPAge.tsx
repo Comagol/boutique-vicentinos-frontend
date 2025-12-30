@@ -47,12 +47,8 @@ export function CatalogPage() {
         <VStack gap={6} align="stretch">
           {/* Título */}
           <Box>
-            <Text fontSize="2xl" fontWeight="bold" color="text.primary">
+            <Text fontSize="2xl" fontWeight="bold" color="text.primary" textAlign="center">
               Catálogo de Productos
-            </Text>
-            <Text color="text.secondary" fontSize="sm">
-              {products.length} producto{products.length !== 1 ? "s" : ""} disponible
-              {products.length !== 1 ? "s" : ""}
             </Text>
           </Box>
 
