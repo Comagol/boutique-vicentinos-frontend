@@ -8,6 +8,7 @@ import { CheckoutRoutes } from "../features/checkout/routes";
 import { AdminProductsRoutes } from "../features/admin-products/routes";
 import { AdminOrdersRoutes } from "../features/admin-orders/routes";
 import { LoginPage } from "../features/admin-auth/pages/Login";
+import { UserAuthRoutes } from "../features/user-auth/routes";
 
 export const AppRouter = () => (
   <BrowserRouter>
@@ -16,6 +17,7 @@ export const AppRouter = () => (
         {CatalogRoutes}
         {ProductDetailRoutes}
         {CheckoutRoutes}
+        {UserAuthRoutes}
       </Route>
 
       {/* Ruta de login (sin protección) */}
