@@ -133,7 +133,7 @@ const availableSizes = sizesArray.filter((sizeObj) => {
 
   if (isLoading) {
     return (
-      <Container maxW="1200px" py={8}>
+      <Container maxW="1200px" py={{ base: 4, md: 8 }} px={{ base: 4, md: 4 }}>
         <VStack gap={4}>
           <Spinner size="xl" color="brand.500" />
           <Text color="text.secondary">Cargando producto...</Text>
@@ -144,7 +144,7 @@ const availableSizes = sizesArray.filter((sizeObj) => {
 
   if (isError || !product) {
     return (
-      <Container maxW="1200px" py={8}>
+      <Container maxW="1200px" py={{ base: 4, md: 8 }} px={{ base: 4, md: 4 }}>
         <VStack gap={4}>
           <Text color="red.500" fontSize="lg">
             Producto no encontrado
@@ -159,17 +159,22 @@ const availableSizes = sizesArray.filter((sizeObj) => {
   const hasDiscount = !!product.discountPrice;
 
   return (
-    <Box py={8} bg="bg.surface" minH="calc(100vh - 200px)">
-      <Container maxW="1200px">
+    <Box 
+      py={{ base: 4, md: 8 }} 
+      px={{ base: 4, md: 0 }}
+      bg="bg.surface" 
+      minH="calc(100vh - 200px)"
+    >
+      <Container maxW="1200px" px={{ base: 0, md: 4 }}>
         <Grid
           templateColumns={{
             base: "1fr",
             lg: "1fr 1fr",
           }}
-          gap={8}
+          gap={{ base: 6, md: 8 }}
         >
           {/* Columna izquierda: Imágenes */}
-          <VStack gap={4} align="stretch">
+          <VStack gap={{ base: 3, md: 4 }} align="center" justify="flex-start">
             {/* Imagen principal */}
             <Box
               borderRadius="md"
@@ -177,6 +182,9 @@ const availableSizes = sizesArray.filter((sizeObj) => {
               aspectRatio="1"
               bg="white"
               shadow="sm"
+              width={{ base: "85%", sm: "75%", md: "100%" }}
+              maxW={{ base: "350px", sm: "400px", md: "500px" }}
+              mx="auto"
             >
               <Image
                 src={imagesArray[selectedImageIndex] || "/placeholder.jpg"}
@@ -189,14 +197,34 @@ const availableSizes = sizesArray.filter((sizeObj) => {
 
             {/* Galería de miniaturas (si hay más de una imagen) */}
             {imagesArray.length > 1 && (
-              <HStack gap={2} overflowX="auto">
+              <HStack 
+                gap={2} 
+                overflowX="auto" 
+                width={{ base: "85%", sm: "75%", md: "100%" }}
+                maxW={{ base: "350px", sm: "400px", md: "500px" }}
+                mx="auto"
+                pb={2}
+                css={{
+                  "&::-webkit-scrollbar": {
+                    height: "6px",
+                  },
+                  "&::-webkit-scrollbar-track": {
+                    background: "transparent",
+                  },
+                  "&::-webkit-scrollbar-thumb": {
+                    background: "#cbd5e0",
+                    borderRadius: "3px",
+                  },
+                }}
+              >
                 {imagesArray.map((img, index) => (
                   <Box
                     key={index}
                     borderRadius="md"
                     overflow="hidden"
-                    width="80px"
-                    height="80px"
+                    width={{ base: "60px", sm: "65px", md: "80px" }}
+                    height={{ base: "60px", sm: "65px", md: "80px" }}
+                    flexShrink={0}
                     cursor="pointer"
                     border={
                       selectedImageIndex === index
@@ -207,6 +235,11 @@ const availableSizes = sizesArray.filter((sizeObj) => {
                       selectedImageIndex === index ? "brand.500" : "gray.200"
                     }
                     onClick={() => setSelectedImageIndex(index)}
+                    transition="all 0.2s ease"
+                    _hover={{
+                      borderColor: "brand.300",
+                      transform: "scale(1.05)",
+                    }}
                   >
                     <Image
                       src={img}
@@ -222,13 +255,26 @@ const availableSizes = sizesArray.filter((sizeObj) => {
           </VStack>
 
           {/* Columna derecha: Información y selectores */}
-          <VStack gap={6} align="stretch">
+          <VStack gap={{ base: 4, md: 6 }} align="stretch">
             {/* Nombre y badges */}
             <VStack align="start" gap={2}>
-              <Text fontSize="3xl" fontWeight="bold" color="text.primary">
+              <Text 
+                fontSize={{ base: "xl", md: "2xl" }}
+                fontWeight="bold" 
+                color="text.primary"
+                textAlign="left"
+                css={{
+                  verticalAlign: "middle",
+                  boxShadow: "0px 4px 12px 0px rgba(0, 0, 0, 0.15)",
+                }}
+              >
                 {product.name}
               </Text>
-              <HStack gap={2}>
+              <HStack 
+                gap={2} 
+                flexWrap="wrap"
+                align="start"
+              >
                 {hasDiscount && (
                   <Badge colorPalette="red" borderRadius="md">
                     Descuento
@@ -249,17 +295,21 @@ const availableSizes = sizesArray.filter((sizeObj) => {
 
             {/* Precio */}
             <VStack align="start" gap={1}>
-              <HStack gap={2}>
+              <HStack gap={2} flexWrap="wrap">
                 {hasDiscount && (
                   <Text
-                    fontSize="lg"
+                    fontSize={{ base: "md", md: "lg" }}
                     color="text.muted"
                     textDecoration="line-through"
                   >
                     ${product.price.toLocaleString("es-AR")}
                   </Text>
                 )}
-                <Text fontSize="2xl" fontWeight="bold" color="brand.700">
+                <Text 
+                  fontSize={{ base: "xl", md: "2xl" }} 
+                  fontWeight="bold" 
+                  color="brand.700"
+                >
                   ${displayPrice.toLocaleString("es-AR")}
                 </Text>
               </HStack>
@@ -337,19 +387,27 @@ const availableSizes = sizesArray.filter((sizeObj) => {
                 <Text fontSize="sm" fontWeight="semibold">
                   Cantidad
                 </Text>
-                <Flex gap={2} align="center">
+                <Flex 
+                  gap={2} 
+                  align="center"
+                  flexWrap="wrap"
+                >
                   <Button
-                    size="sm"
+                    size={{ base: "md", md: "sm" }}
                     onClick={() => setQuantity(Math.max(1, quantity - 1))}
                     disabled={quantity <= 1}
                   >
                     -
                   </Button>
-                  <Text minW="40px" textAlign="center">
+                  <Text 
+                    minW={{ base: "50px", md: "40px" }} 
+                    textAlign="center"
+                    fontSize={{ base: "md", md: "sm" }}
+                  >
                     {quantity}
                   </Text>
                   <Button
-                    size="sm"
+                    size={{ base: "md", md: "sm" }}
                     onClick={() =>
                       setQuantity(Math.min(availableStock, quantity + 1))
                     }
@@ -357,7 +415,13 @@ const availableSizes = sizesArray.filter((sizeObj) => {
                   >
                     +
                   </Button>
-                  <Text fontSize="sm" color="text.muted" ml="auto">
+                  <Text 
+                    fontSize="sm" 
+                    color="text.muted" 
+                    ml={{ base: 0, md: "auto" }}
+                    width={{ base: "100%", md: "auto" }}
+                    textAlign={{ base: "left", md: "right" }}
+                  >
                     Máx: {availableStock}
                   </Text>
                 </Flex>
@@ -368,7 +432,7 @@ const availableSizes = sizesArray.filter((sizeObj) => {
 
             {/* Botón agregar al carrito */}
             <CTAButton
-              size="lg"
+              size={{ base: "md", md: "lg" }}
               width="100%"
               onClick={handleAddToCart}
               disabled={
