@@ -129,7 +129,6 @@ export function Navbar() {
           {isMobile && (
             <IconButton
               aria-label="Iniciar sesión"
-              icon={<FaUser />}
               variant="ghost"
               color="white"
               onClick={() => navigate("/login")}
@@ -137,7 +136,9 @@ export function Navbar() {
                 bg: "whiteAlpha.200",
                 color: "brand.100",
               }}
-            />
+            >
+              <Icon as={FaUser} boxSize={5} />
+            </IconButton>
           )}
 
           {/* Cart Icon */}
