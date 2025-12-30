@@ -1,5 +1,5 @@
 import { apiClient, saveAuthToken, removeAuthToken } from "./apiClient";
-import type { AdminUser } from "../types";
+import type { AdminUser, RegularUser, UserRole } from "../types";
 
 interface LoginRequest {
   email: string;
@@ -19,7 +19,9 @@ interface ChangePasswordRequest {
 
 interface AuthResponse {
   message: string;
-  admin: AdminUser;
+  admin?: AdminUser;
+  user?: RegularUser;
+  role: UserRole;
   token: string;
 }
 

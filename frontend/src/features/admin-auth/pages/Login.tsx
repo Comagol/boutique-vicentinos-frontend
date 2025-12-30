@@ -13,6 +13,7 @@ import type { ChangeEvent } from "react";
 import { useAuthStore } from "../../../stores/authStore";
 import { toaster } from "../../../app/AppProvider";
 import type { ApiError } from "../../../types";
+import { getRedirectPathByRole } from "../../../utils/authRedirect";
 
 export function LoginPage() {
   const navigate = useNavigate();
@@ -66,6 +67,9 @@ export function LoginPage() {
     try {
       await login(formData.email, formData.password);
 
+      // Obtener el rol actualizado después del login
+      const currentRole = useAuthStore.getState().role;
+
       toaster.create({
         title: "¡Bienvenido!",
         description: "Has iniciado sesión correctamente",
@@ -73,8 +77,9 @@ export function LoginPage() {
         duration: 2000,
       });
 
-      // Redirigir al admin
-      navigate("/admin");
+      // Redirigir según el rol
+      const redirectPath = getRedirectPathByRole(currentRole);
+      navigate(redirectPath);
     } catch (error) {
       const errorMessage =
         (error as ApiError).message ||

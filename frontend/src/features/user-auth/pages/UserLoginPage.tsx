@@ -10,12 +10,15 @@ import {
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import type { ChangeEvent } from "react";
-import { authService } from "../../../services/authService";
+import { useAuthStore } from "../../../stores/authStore";
 import { toaster } from "../../../app/AppProvider";
 import type { ApiError } from "../../../types";
+import { getRedirectPathByRole } from "../../../utils/authRedirect";
 
 export function UserLoginPage() {
   const navigate = useNavigate();
+  const login = useAuthStore((state) => state.login);
+  const role = useAuthStore((state) => state.role);
 
   const [formData, setFormData] = useState({
     email: "",
@@ -64,10 +67,10 @@ export function UserLoginPage() {
     setIsLoading(true);
 
     try {
-      await authService.login({
-        email: formData.email,
-        password: formData.password,
-      });
+      await login(formData.email, formData.password);
+
+      // Obtener el rol actualizado después del login
+      const currentRole = useAuthStore.getState().role;
 
       toaster.create({
         title: "¡Bienvenido!",
@@ -76,8 +79,9 @@ export function UserLoginPage() {
         duration: 2000,
       });
 
-      // Redirigir al inicio
-      navigate("/");
+      // Redirigir según el rol
+      const redirectPath = getRedirectPathByRole(currentRole);
+      navigate(redirectPath);
     } catch (error) {
       const errorMessage =
         (error as ApiError).message ||

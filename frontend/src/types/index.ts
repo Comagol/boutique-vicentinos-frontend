@@ -108,7 +108,8 @@ export interface PaymentStatusResponse {
   dateApproved?: string;
 }
 
-// ========== admin types ===========
+// ========== User types ===========
+export type UserRole = "admin" | "user";
 export type AdminRole = "admin";
 
 export interface AdminUser {
@@ -120,6 +121,15 @@ export interface AdminUser {
   updatedAt: string;
   lastLogin: string;
   isActive: boolean;
+}
+
+export interface RegularUser {
+  id: string;
+  email: string;
+  name: string;
+  role: "user";
+  createdAt: string;
+  updatedAt: string;
 }
 
 // ========= Common response Types =====
