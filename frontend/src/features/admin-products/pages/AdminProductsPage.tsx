@@ -45,7 +45,7 @@ export function AdminProductsPage() {
 
   if (isLoading) {
     return (
-      <Container maxW="1400px" py={8}>
+      <Container maxW="1400px" py={{ base: 4, md: 8 }}>
         <VStack gap={4}>
           <Spinner size="xl" color="brand.500" />
           <Text color="text.secondary">Cargando productos...</Text>
@@ -56,9 +56,9 @@ export function AdminProductsPage() {
 
   if (isError) {
     return (
-      <Container maxW="1400px" py={8}>
+      <Container maxW="1400px" py={{ base: 4, md: 8 }}>
         <VStack gap={4}>
-          <Text color="red.500" fontSize="lg">
+          <Text color="red.500" fontSize={{ base: "md", md: "lg" }}>
             Error al cargar los productos
           </Text>
           <Button onClick={() => refetch()}>Reintentar</Button>
@@ -69,27 +69,30 @@ export function AdminProductsPage() {
 
   return (
     <Box>
-      <VStack gap={6} align="stretch">
+      <VStack gap={{ base: 4, md: 6 }} align="stretch">
         {/* Header con título y botón crear */}
-        <HStack justify="space-between" flexWrap="wrap" gap={4}>
-          <Heading size="xl" color="text.primary">
+        <HStack justify="space-between" flexWrap="wrap" gap={4} align={{ base: "start", md: "center" }}>
+          <Heading size={{ base: "lg", md: "xl" }} color="text.primary">
             Gestión de Productos
           </Heading>
-          <CTAButton onClick={() => navigate("/admin/products/new")}>
+          <CTAButton 
+            onClick={() => navigate("/admin/products/new")}
+            width={{ base: "100%", md: "auto" }}
+          >
             + Crear Producto
           </CTAButton>
         </HStack>
 
         {/* Filtros y búsqueda */}
-        <HStack gap={4} flexWrap="wrap">
-          <Box flex="1" minW="200px">
+        <HStack gap={4} flexWrap="wrap" align={{ base: "stretch", md: "center" }}>
+          <Box flex="1" minW={{ base: "100%", md: "200px" }}>
             <Input
               placeholder="Buscar por nombre..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
             />
           </Box>
-          <Box minW="200px">
+          <Box minW={{ base: "100%", md: "200px" }}>
             <NativeSelect.Root>
               <NativeSelect.Field
                 value={selectedCategory}

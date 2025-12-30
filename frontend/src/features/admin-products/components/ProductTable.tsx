@@ -6,12 +6,14 @@ import {
   HStack,
   IconButton,
   VStack,
+  useBreakpointValue,
 } from "@chakra-ui/react";
 import { useNavigate } from "react-router-dom";
 import { productsService } from "../../../services/productService";
 import { toaster } from "../../../app/AppProvider";
 import type { Product } from "../../../types";
 import { FiEdit, FiTrash2, FiEye, FiEyeOff } from "react-icons/fi";
+import { ProductCard } from "./ProductCard";
 
 interface ProductTableProps {
   products: Product[];
@@ -20,6 +22,8 @@ interface ProductTableProps {
 
 export function ProductTable({ products, onRefresh }: ProductTableProps) {
   const navigate = useNavigate();
+  // Mostrar cards en móvil y tablet, tabla solo en desktop (lg+)
+  const showCards = useBreakpointValue({ base: true, lg: false });
 
   const handleDelete = async (productId: string, productName: string) => {
     if (!confirm(`¿Estás seguro de eliminar permanentemente "${productName}"?`)) {
@@ -77,37 +81,49 @@ export function ProductTable({ products, onRefresh }: ProductTableProps) {
 
   if (products.length === 0) {
     return (
-      <Box bg="white" borderRadius="md" p={8} textAlign="center">
-        <Text color="text.muted">No hay productos disponibles</Text>
+      <Box bg="white" borderRadius="md" p={{ base: 4, md: 8 }} textAlign="center">
+        <Text color="text.muted" fontSize={{ base: "sm", md: "md" }}>No hay productos disponibles</Text>
       </Box>
     );
   }
 
+  // Vista móvil y tablet: Cards
+  if (showCards) {
+    return (
+      <VStack gap={4} align="stretch">
+        {products.map((product) => (
+          <ProductCard key={product.id} product={product} onRefresh={onRefresh} />
+        ))}
+      </VStack>
+    );
+  }
+
+  // Vista desktop (lg+): Tabla
   return (
     <Box bg="white" borderRadius="md" overflow="hidden" shadow="sm">
       <Box overflowX="auto">
         <Box as="table" width="100%" borderCollapse="collapse">
           <Box as="thead" bg="gray.50">
             <Box as="tr">
-              <Box as="th" px={4} py={3} textAlign="left" fontSize="sm" fontWeight="semibold" color="text.primary" borderBottom="1px solid" borderColor="gray.200">
+              <Box as="th" px={{ base: 2, md: 4 }} py={{ base: 2, md: 3 }} textAlign="left" fontSize={{ base: "xs", md: "sm" }} fontWeight="semibold" color="text.primary" borderBottom="1px solid" borderColor="gray.200">
                 Imagen
               </Box>
-              <Box as="th" px={4} py={3} textAlign="left" fontSize="sm" fontWeight="semibold" color="text.primary" borderBottom="1px solid" borderColor="gray.200">
+              <Box as="th" px={{ base: 2, md: 4 }} py={{ base: 2, md: 3 }} textAlign="left" fontSize={{ base: "xs", md: "sm" }} fontWeight="semibold" color="text.primary" borderBottom="1px solid" borderColor="gray.200">
                 Nombre
               </Box>
-              <Box as="th" px={4} py={3} textAlign="left" fontSize="sm" fontWeight="semibold" color="text.primary" borderBottom="1px solid" borderColor="gray.200">
+              <Box as="th" px={{ base: 2, md: 4 }} py={{ base: 2, md: 3 }} textAlign="left" fontSize={{ base: "xs", md: "sm" }} fontWeight="semibold" color="text.primary" borderBottom="1px solid" borderColor="gray.200" display={{ base: "none", lg: "table-cell" }}>
                 Categoría
               </Box>
-              <Box as="th" px={4} py={3} textAlign="left" fontSize="sm" fontWeight="semibold" color="text.primary" borderBottom="1px solid" borderColor="gray.200">
+              <Box as="th" px={{ base: 2, md: 4 }} py={{ base: 2, md: 3 }} textAlign="left" fontSize={{ base: "xs", md: "sm" }} fontWeight="semibold" color="text.primary" borderBottom="1px solid" borderColor="gray.200">
                 Precio
               </Box>
-              <Box as="th" px={4} py={3} textAlign="left" fontSize="sm" fontWeight="semibold" color="text.primary" borderBottom="1px solid" borderColor="gray.200">
+              <Box as="th" px={{ base: 2, md: 4 }} py={{ base: 2, md: 3 }} textAlign="left" fontSize={{ base: "xs", md: "sm" }} fontWeight="semibold" color="text.primary" borderBottom="1px solid" borderColor="gray.200">
                 Stock
               </Box>
-              <Box as="th" px={4} py={3} textAlign="left" fontSize="sm" fontWeight="semibold" color="text.primary" borderBottom="1px solid" borderColor="gray.200">
+              <Box as="th" px={{ base: 2, md: 4 }} py={{ base: 2, md: 3 }} textAlign="left" fontSize={{ base: "xs", md: "sm" }} fontWeight="semibold" color="text.primary" borderBottom="1px solid" borderColor="gray.200">
                 Estado
               </Box>
-              <Box as="th" px={4} py={3} textAlign="left" fontSize="sm" fontWeight="semibold" color="text.primary" borderBottom="1px solid" borderColor="gray.200">
+              <Box as="th" px={{ base: 2, md: 4 }} py={{ base: 2, md: 3 }} textAlign="left" fontSize={{ base: "xs", md: "sm" }} fontWeight="semibold" color="text.primary" borderBottom="1px solid" borderColor="gray.200">
                 Acciones
               </Box>
             </Box>
@@ -150,19 +166,19 @@ export function ProductTable({ products, onRefresh }: ProductTableProps) {
                   borderBottom="1px solid"
                   borderColor="gray.200"
                 >
-                  <Box as="td" px={4} py={3}>
+                  <Box as="td" px={{ base: 2, md: 4 }} py={{ base: 2, md: 3 }}>
                     <Image
                       src={imagesArray[0] || "/placeholder.jpg"}
                       alt={product.name}
-                      width="60px"
-                      height="60px"
+                      width={{ base: "40px", md: "60px" }}
+                      height={{ base: "40px", md: "60px" }}
                       objectFit="cover"
                       borderRadius="md"
                     />
                   </Box>
-                  <Box as="td" px={4} py={3}>
+                  <Box as="td" px={{ base: 2, md: 4 }} py={{ base: 2, md: 3 }}>
                     <VStack align="start" gap={0}>
-                      <Text fontWeight="semibold">{product.name}</Text>
+                      <Text fontWeight="semibold" fontSize={{ base: "xs", md: "sm" }}>{product.name}</Text>
                       {product.discountPrice && (
                         <Text fontSize="xs" color="text.muted">
                           ${product.price.toLocaleString("es-AR")}
@@ -170,37 +186,39 @@ export function ProductTable({ products, onRefresh }: ProductTableProps) {
                       )}
                     </VStack>
                   </Box>
-                  <Box as="td" px={4} py={3}>
-                    <Text fontSize="sm" color="text.secondary">
+                  <Box as="td" px={{ base: 2, md: 4 }} py={{ base: 2, md: 3 }} display={{ base: "none", lg: "table-cell" }}>
+                    <Text fontSize={{ base: "xs", md: "sm" }} color="text.secondary">
                       {product.category}
                     </Text>
                   </Box>
-                  <Box as="td" px={4} py={3}>
-                    <Text fontWeight="semibold">
+                  <Box as="td" px={{ base: 2, md: 4 }} py={{ base: 2, md: 3 }}>
+                    <Text fontWeight="semibold" fontSize={{ base: "xs", md: "sm" }}>
                       ${displayPrice.toLocaleString("es-AR")}
                     </Text>
                   </Box>
-                  <Box as="td" px={4} py={3}>
+                  <Box as="td" px={{ base: 2, md: 4 }} py={{ base: 2, md: 3 }}>
                     <Badge
                       colorPalette={totalStock > 0 ? "green" : "red"}
                       borderRadius="md"
+                      fontSize={{ base: "xs", md: "sm" }}
                     >
                       {totalStock} unidades
                     </Badge>
                   </Box>
-                  <Box as="td" px={4} py={3}>
+                  <Box as="td" px={{ base: 2, md: 4 }} py={{ base: 2, md: 3 }}>
                     <Badge
                       colorPalette={product.isActive ? "green" : "gray"}
                       borderRadius="md"
+                      fontSize={{ base: "xs", md: "sm" }}
                     >
                       {product.isActive ? "Activo" : "Inactivo"}
                     </Badge>
                   </Box>
-                  <Box as="td" px={4} py={3}>
-                    <HStack gap={2}>
+                  <Box as="td" px={{ base: 2, md: 4 }} py={{ base: 2, md: 3 }}>
+                    <HStack gap={1}>
                       <IconButton
                         aria-label="Ver/Editar"
-                        size="sm"
+                        size={{ base: "xs", md: "sm" }}
                         variant="ghost"
                         onClick={() => navigate(`/admin/products/${product.id}`)}
                       >
@@ -210,7 +228,7 @@ export function ProductTable({ products, onRefresh }: ProductTableProps) {
                         aria-label={
                           product.isActive ? "Desactivar" : "Activar"
                         }
-                        size="sm"
+                        size={{ base: "xs", md: "sm" }}
                         variant="ghost"
                         onClick={() => handleToggleActive(product)}
                       >
@@ -218,7 +236,7 @@ export function ProductTable({ products, onRefresh }: ProductTableProps) {
                       </IconButton>
                       <IconButton
                         aria-label="Eliminar"
-                        size="sm"
+                        size={{ base: "xs", md: "sm" }}
                         variant="ghost"
                         color="red.500"
                         onClick={() => handleDelete(product.id, product.name)}

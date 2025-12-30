@@ -55,7 +55,7 @@ export function AdminOrdersPage() {
 
   if (isLoading) {
     return (
-      <Container maxW="1400px" py={8}>
+      <Container maxW="1400px" py={{ base: 4, md: 8 }}>
         <VStack gap={4}>
           <Spinner size="xl" color="brand.500" />
           <Text color="text.secondary">Cargando órdenes...</Text>
@@ -66,9 +66,9 @@ export function AdminOrdersPage() {
 
   if (isError) {
     return (
-      <Container maxW="1400px" py={8}>
+      <Container maxW="1400px" py={{ base: 4, md: 8 }}>
         <VStack gap={4}>
-          <Text color="red.500" fontSize="lg">
+          <Text color="red.500" fontSize={{ base: "md", md: "lg" }}>
             Error al cargar las órdenes
           </Text>
           <Button onClick={() => refetch()}>Reintentar</Button>
@@ -79,22 +79,22 @@ export function AdminOrdersPage() {
 
   return (
     <Box>
-      <VStack gap={6} align="stretch">
+      <VStack gap={{ base: 4, md: 6 }} align="stretch">
         {/* Header con título */}
-        <Heading size="xl" color="text.primary">
+        <Heading size={{ base: "lg", md: "xl" }} color="text.primary">
           Gestión de Pedidos
         </Heading>
 
         {/* Filtros y búsqueda */}
-        <HStack gap={4} flexWrap="wrap">
-          <Box flex="1" minW="200px">
+        <HStack gap={4} flexWrap="wrap" align={{ base: "stretch", md: "center" }}>
+          <Box flex="1" minW={{ base: "100%", md: "200px" }}>
             <Input
               placeholder="Buscar por número, email o nombre..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
             />
           </Box>
-          <Box minW="200px">
+          <Box minW={{ base: "100%", md: "200px" }}>
             <NativeSelect.Root>
               <NativeSelect.Field
                 value={selectedStatus}

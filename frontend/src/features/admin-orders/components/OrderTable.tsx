@@ -4,7 +4,8 @@ import {
   Badge,
   HStack,
   IconButton,
-  VStack
+  VStack,
+  useBreakpointValue,
 } from "@chakra-ui/react";
 import { useState } from "react";
 import { ordersService } from "../../../services/ordersService";
@@ -17,6 +18,7 @@ import {
   FiXCircle,
 } from "react-icons/fi";
 import { OrderDetailModal } from "./OrderDetailModal";
+import { OrderCard } from "./OrderCard";
 
 interface OrderTableProps {
   orders: Order[];
@@ -73,6 +75,8 @@ const formatDate = (dateString: string): string => {
 export function OrderTable({ orders, onRefresh }: OrderTableProps) {
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  // Mostrar cards en móvil y tablet, tabla solo en desktop (lg+)
+  const showCards = useBreakpointValue({ base: true, lg: false });
 
   const handleViewDetails = (order: Order) => {
     setSelectedOrder(order);
@@ -176,12 +180,41 @@ export function OrderTable({ orders, onRefresh }: OrderTableProps) {
 
   if (orders.length === 0) {
     return (
-      <Box bg="white" borderRadius="md" p={8} textAlign="center">
+      <Box bg="white" borderRadius="md" p={{ base: 4, md: 8 }} textAlign="center">
         <Text color="text.muted">No hay pedidos disponibles</Text>
       </Box>
     );
   }
 
+  // Vista móvil y tablet: Cards
+  if (showCards) {
+    return (
+      <>
+        <VStack gap={4} align="stretch">
+          {orders.map((order) => (
+            <OrderCard
+              key={order.id}
+              order={order}
+              onRefresh={onRefresh}
+              onViewDetails={handleViewDetails}
+            />
+          ))}
+        </VStack>
+
+        {/* Modal de detalles */}
+        <OrderDetailModal
+          order={selectedOrder}
+          isOpen={isModalOpen}
+          onClose={() => {
+            setIsModalOpen(false);
+            setSelectedOrder(null);
+          }}
+        />
+      </>
+    );
+  }
+
+  // Vista desktop (lg+): Tabla
   return (
     <Box bg="white" borderRadius="md" overflow="hidden" shadow="sm">
       <Box overflowX="auto">
@@ -190,10 +223,10 @@ export function OrderTable({ orders, onRefresh }: OrderTableProps) {
             <Box as="tr">
               <Box
                 as="th"
-                px={4}
-                py={3}
+                px={{ base: 2, md: 4 }}
+                py={{ base: 2, md: 3 }}
                 textAlign="left"
-                fontSize="sm"
+                fontSize={{ base: "xs", md: "sm" }}
                 fontWeight="semibold"
                 color="text.primary"
                 borderBottom="1px solid"
@@ -203,10 +236,10 @@ export function OrderTable({ orders, onRefresh }: OrderTableProps) {
               </Box>
               <Box
                 as="th"
-                px={4}
-                py={3}
+                px={{ base: 2, md: 4 }}
+                py={{ base: 2, md: 3 }}
                 textAlign="left"
-                fontSize="sm"
+                fontSize={{ base: "xs", md: "sm" }}
                 fontWeight="semibold"
                 color="text.primary"
                 borderBottom="1px solid"
@@ -216,23 +249,24 @@ export function OrderTable({ orders, onRefresh }: OrderTableProps) {
               </Box>
               <Box
                 as="th"
-                px={4}
-                py={3}
+                px={{ base: 2, md: 4 }}
+                py={{ base: 2, md: 3 }}
                 textAlign="left"
-                fontSize="sm"
+                fontSize={{ base: "xs", md: "sm" }}
                 fontWeight="semibold"
                 color="text.primary"
                 borderBottom="1px solid"
                 borderColor="gray.200"
+                display={{ base: "none", lg: "table-cell" }}
               >
                 Items
               </Box>
               <Box
                 as="th"
-                px={4}
-                py={3}
+                px={{ base: 2, md: 4 }}
+                py={{ base: 2, md: 3 }}
                 textAlign="left"
-                fontSize="sm"
+                fontSize={{ base: "xs", md: "sm" }}
                 fontWeight="semibold"
                 color="text.primary"
                 borderBottom="1px solid"
@@ -242,23 +276,24 @@ export function OrderTable({ orders, onRefresh }: OrderTableProps) {
               </Box>
               <Box
                 as="th"
-                px={4}
-                py={3}
+                px={{ base: 2, md: 4 }}
+                py={{ base: 2, md: 3 }}
                 textAlign="left"
-                fontSize="sm"
+                fontSize={{ base: "xs", md: "sm" }}
                 fontWeight="semibold"
                 color="text.primary"
                 borderBottom="1px solid"
                 borderColor="gray.200"
+                display={{ base: "none", lg: "table-cell" }}
               >
                 Método de Pago
               </Box>
               <Box
                 as="th"
-                px={4}
-                py={3}
+                px={{ base: 2, md: 4 }}
+                py={{ base: 2, md: 3 }}
                 textAlign="left"
-                fontSize="sm"
+                fontSize={{ base: "xs", md: "sm" }}
                 fontWeight="semibold"
                 color="text.primary"
                 borderBottom="1px solid"
@@ -268,23 +303,24 @@ export function OrderTable({ orders, onRefresh }: OrderTableProps) {
               </Box>
               <Box
                 as="th"
-                px={4}
-                py={3}
+                px={{ base: 2, md: 4 }}
+                py={{ base: 2, md: 3 }}
                 textAlign="left"
-                fontSize="sm"
+                fontSize={{ base: "xs", md: "sm" }}
                 fontWeight="semibold"
                 color="text.primary"
                 borderBottom="1px solid"
                 borderColor="gray.200"
+                display={{ base: "none", md: "table-cell" }}
               >
                 Fecha
               </Box>
               <Box
                 as="th"
-                px={4}
-                py={3}
+                px={{ base: 2, md: 4 }}
+                py={{ base: 2, md: 3 }}
                 textAlign="left"
-                fontSize="sm"
+                fontSize={{ base: "xs", md: "sm" }}
                 fontWeight="semibold"
                 color="text.primary"
                 borderBottom="1px solid"
@@ -318,56 +354,57 @@ export function OrderTable({ orders, onRefresh }: OrderTableProps) {
                   borderBottom="1px solid"
                   borderColor="gray.200"
                 >
-                  <Box as="td" px={4} py={3}>
-                    <Text fontWeight="semibold" color="brand.700">
+                  <Box as="td" px={{ base: 2, md: 4 }} py={{ base: 2, md: 3 }}>
+                    <Text fontWeight="semibold" color="brand.700" fontSize={{ base: "xs", md: "sm" }}>
                       #{orderNumber}
                     </Text>
                   </Box>
-                  <Box as="td" px={4} py={3}>
+                  <Box as="td" px={{ base: 2, md: 4 }} py={{ base: 2, md: 3 }}>
                     <VStack align="start" gap={0}>
-                      <Text fontWeight="semibold">{customerInfo.name}</Text>
+                      <Text fontWeight="semibold" fontSize={{ base: "xs", md: "sm" }}>{customerInfo.name}</Text>
                       <Text fontSize="xs" color="text.muted">
                         {customerInfo.email}
                       </Text>
-                      <Text fontSize="xs" color="text.muted">
+                      <Text fontSize="xs" color="text.muted" display={{ base: "none", lg: "block" }}>
                         {customerInfo.phone}
                       </Text>
                     </VStack>
                   </Box>
-                  <Box as="td" px={4} py={3}>
-                    <Text fontSize="sm">
+                  <Box as="td" px={{ base: 2, md: 4 }} py={{ base: 2, md: 3 }} display={{ base: "none", lg: "table-cell" }}>
+                    <Text fontSize={{ base: "xs", md: "sm" }}>
                       {itemsArray.length} producto{itemsArray.length !== 1 ? "s" : ""}
                     </Text>
                   </Box>
-                  <Box as="td" px={4} py={3}>
-                    <Text fontWeight="semibold">
+                  <Box as="td" px={{ base: 2, md: 4 }} py={{ base: 2, md: 3 }}>
+                    <Text fontWeight="semibold" fontSize={{ base: "xs", md: "sm" }}>
                       ${total.toLocaleString("es-AR")}
                     </Text>
                   </Box>
-                  <Box as="td" px={4} py={3}>
-                    <Text fontSize="sm" color="text.secondary">
+                  <Box as="td" px={{ base: 2, md: 4 }} py={{ base: 2, md: 3 }} display={{ base: "none", lg: "table-cell" }}>
+                    <Text fontSize={{ base: "xs", md: "sm" }} color="text.secondary">
                       {paymentMethod === "cash" ? "Efectivo" : "Mercado Pago"}
                     </Text>
                   </Box>
-                  <Box as="td" px={4} py={3}>
+                  <Box as="td" px={{ base: 2, md: 4 }} py={{ base: 2, md: 3 }}>
                     <Badge
                       colorPalette={getStatusColor(status)}
                       borderRadius="md"
+                      fontSize={{ base: "xs", md: "sm" }}
                     >
                       {getStatusLabel(status)}
                     </Badge>
                   </Box>
-                  <Box as="td" px={4} py={3}>
-                    <Text fontSize="sm" color="text.muted">
+                  <Box as="td" px={{ base: 2, md: 4 }} py={{ base: 2, md: 3 }} display={{ base: "none", md: "table-cell" }}>
+                    <Text fontSize={{ base: "xs", md: "sm" }} color="text.muted">
                       {formatDate(createdAt)}
                     </Text>
                   </Box>
-                  <Box as="td" px={4} py={3}>
-                    <HStack gap={2}>
+                  <Box as="td" px={{ base: 2, md: 4 }} py={{ base: 2, md: 3 }}>
+                    <HStack gap={1}>
                       {/* Ver detalles */}
                       <IconButton
                         aria-label="Ver detalles"
-                        size="sm"
+                        size={{ base: "xs", md: "sm" }}
                         variant="ghost"
                         onClick={() => handleViewDetails(order)}
                       >
@@ -379,7 +416,7 @@ export function OrderTable({ orders, onRefresh }: OrderTableProps) {
                         paymentMethod === "cash" && (
                           <IconButton
                             aria-label="Confirmar pago"
-                            size="sm"
+                            size={{ base: "xs", md: "sm" }}
                             variant="ghost"
                             color="green.500"
                             onClick={() => handleConfirmCashPayment(order)}
@@ -392,7 +429,7 @@ export function OrderTable({ orders, onRefresh }: OrderTableProps) {
                       {status === "payment-confirmed" && (
                         <IconButton
                           aria-label="Marcar como entregado"
-                          size="sm"
+                          size={{ base: "xs", md: "sm" }}
                           variant="ghost"
                           color="blue.500"
                           onClick={() => handleMarkAsDelivered(order)}
@@ -407,7 +444,7 @@ export function OrderTable({ orders, onRefresh }: OrderTableProps) {
                         status !== "cancelled-by-time" && (
                           <IconButton
                             aria-label="Cancelar pedido"
-                            size="sm"
+                            size={{ base: "xs", md: "sm" }}
                             variant="ghost"
                             color="red.500"
                             onClick={() => handleCancelOrder(order)}
