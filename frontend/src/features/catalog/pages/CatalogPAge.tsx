@@ -1,6 +1,7 @@
 import { Box, Container, Grid, Spinner, Text, VStack } from "@chakra-ui/react";
 import { useQuery } from "@tanstack/react-query";
 import { ProductCard } from "../../../components/ProductCard";
+import { ProductCarousel } from "../../../components/ProductCarousel";
 import { getProducts } from "../../../services/api";
 
 export function CatalogPage() {
@@ -41,16 +42,27 @@ export function CatalogPage() {
     );
   }
 
+  // Filtrar productos con descuento para el carrusel
+  const discountedProducts = products.filter(
+    (product) => product.isActive && product.discountPrice
+  );
+
   return (
-    <Box py={8} bg="bg.surface" minH="calc(100vh - 200px)">
-      <Container maxW="1200px">
-        <VStack gap={6} align="stretch">
-          {/* Título */}
-          <Box>
-            <Text fontSize="2xl" fontWeight="bold" color="text.primary" textAlign="center">
-              Catálogo de Productos
-            </Text>
-          </Box>
+    <Box bg="bg.surface" minH="calc(100vh - 200px)">
+      {/* Carrusel de productos con descuento */}
+      {discountedProducts.length > 0 && (
+        <ProductCarousel products={discountedProducts} />
+      )}
+
+      <Box py={8}>
+        <Container maxW="1200px">
+          <VStack gap={6} align="stretch">
+            {/* Título */}
+            <Box>
+              <Text fontSize="2xl" fontWeight="bold" color="text.primary" textAlign="center">
+                Catálogo de Productos
+              </Text>
+            </Box>
 
           {/* Grid de productos */}
           {products.length > 0 ? (
@@ -76,8 +88,9 @@ export function CatalogPage() {
               </Text>
             </VStack>
           )}
-        </VStack>
-      </Container>
+          </VStack>
+        </Container>
+      </Box>
     </Box>
   );
 }

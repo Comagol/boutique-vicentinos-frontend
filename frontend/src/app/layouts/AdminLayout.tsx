@@ -17,18 +17,24 @@ export const AdminLayout = () => {
   const closeDrawer = () => setIsDrawerOpen(false);
 
   return (
-    <Flex minH="100vh" bg="bg.dim">
-      {/* Sidebar */}
+    <Flex height="100vh" bg="bg.dim" overflow="hidden">
+      {/* Sidebar - Fijo y no scrolleable */}
       <Box
         width="280px"
         bg="white"
         borderRight="1px solid"
         borderColor="gray.200"
         display={{ base: "none", md: "block" }}
+        position="fixed"
+        left={0}
+        top={0}
+        height="100vh"
+        overflowY="hidden"
+        zIndex={10}
       >
         <VStack gap={0} align="stretch" height="100vh">
           {/* Header del sidebar */}
-          <Box p={6} borderBottom="1px solid" borderColor="gray.200">
+          <Box p={6} borderBottom="1px solid" borderColor="gray.200" flexShrink={0}>
             <VStack gap={2} align="start">
               <Heading size="md" color="brand.700">
                 Admin Panel
@@ -41,7 +47,7 @@ export const AdminLayout = () => {
 
           {/* Info del admin */}
           {admin && (
-            <Box p={4} borderBottom="1px solid" borderColor="gray.200">
+            <Box p={4} borderBottom="1px solid" borderColor="gray.200" flexShrink={0}>
               <VStack gap={1} align="start">
                 <Text fontSize="sm" fontWeight="semibold" color="text.primary">
                   {admin.name}
@@ -54,7 +60,7 @@ export const AdminLayout = () => {
           )}
 
           {/* Navegación */}
-          <VStack gap={2} align="stretch" p={4} flex="1">
+          <VStack gap={2} align="stretch" p={4} flex="1" overflowY="auto">
             <Link to="/admin">
               <Button
                 variant="ghost"
@@ -95,8 +101,14 @@ export const AdminLayout = () => {
         </VStack>
       </Box>
 
-      {/* Contenido principal */}
-      <Box flex="1" overflow="auto">
+      {/* Contenido principal - Scrolleable */}
+      <Box 
+        flex="1" 
+        marginLeft={{ base: 0, md: "280px" }}
+        height="100vh"
+        overflowY="auto"
+        overflowX="hidden"
+      >
         {/* Topbar para móvil */}
         <Box
           display={{ base: "block", md: "none" }}
