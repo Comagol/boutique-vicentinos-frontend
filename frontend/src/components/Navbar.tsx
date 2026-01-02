@@ -10,6 +10,7 @@ import {
   Icon,
 } from "@chakra-ui/react";
 import { useCartStore } from "../stores/cartStore";
+import { useAuthStore } from "../stores/authStore";
 import { FaShoppingCart, FaUser } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import { toaster } from "../app/AppProvider";
@@ -21,7 +22,6 @@ export function Navbar() {
   const navigate = useNavigate();
   const [prevItemCount, setPrevItemCount] = useState(itemCount);
   const [isCartAnimating, setIsCartAnimating] = useState(false);
-
   const isMobile = useBreakpointValue({ base: true, md: false });
 
   // Animación del badge cuando cambia el conteo
@@ -47,6 +47,13 @@ export function Navbar() {
     navigate("/checkout");
   };
 
+  const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
+  const user = useAuthStore((state) => state.user);
+  const admin = useAuthStore((state) => state.admin);
+  const role = useAuthStore((state) => state.role);
+
+  const userName = role === "admin" ? admin?.name : user?.name;
+  console.log(userName);
   return (
     <Box
       as="header"
