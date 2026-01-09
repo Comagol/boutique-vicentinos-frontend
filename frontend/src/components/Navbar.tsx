@@ -51,9 +51,10 @@ export function Navbar() {
   const user = useAuthStore((state) => state.user);
   const admin = useAuthStore((state) => state.admin);
   const role = useAuthStore((state) => state.role);
+  const logout = useAuthStore((state) => state.logout);
 
   const userName = role === "admin" ? admin?.name : user?.name;
-  console.log(userName);
+
   return (
     <Box
       as="header"
@@ -95,57 +96,124 @@ export function Navbar() {
           {/* Auth Buttons - Hidden on mobile, shown on desktop */}
           {!isMobile && (
             <>
-              <Button
-                variant="ghost"
-                color="white"
-                onClick={() => navigate("/login")}
-                _hover={{
-                  bg: "whiteAlpha.200",
-                  color: "brand.100",
-                }}
-                _active={{
-                  bg: "whiteAlpha.300",
-                }}
-                transition="all 0.2s ease"
-                fontWeight="medium"
-              >
-                Iniciar Sesión
-              </Button>
-              <Button
-                bg="brand.500"
-                color="white"
-                onClick={() => navigate("/register")}
-                _hover={{
-                  bg: "brand.700",
-                  transform: "translateY(-1px)",
-                  shadow: "lg",
-                }}
-                _active={{
-                  transform: "translateY(0)",
-                }}
-                transition="all 0.2s ease"
-                fontWeight="semibold"
-                borderRadius="md"
-              >
-                Registrarse
-              </Button>
+              {!isAuthenticated ? (
+                <>
+                  <Button
+                    variant="ghost"
+                    color="white"
+                    onClick={() => navigate("/login")}
+                    _hover={{
+                      bg: "whiteAlpha.200",
+                      color: "brand.100",
+                    }}
+                    _active={{
+                      bg: "whiteAlpha.300",
+                    }}
+                    transition="all 0.2s ease"
+                    fontWeight="medium"
+                  >
+                    Iniciar Sesión
+                  </Button>
+                  <Button
+                    bg="brand.500"
+                    color="white"
+                    onClick={() => navigate("/register")}
+                    _hover={{
+                      bg: "brand.700",
+                      transform: "translateY(-1px)",
+                      shadow: "lg",
+                    }}
+                    _active={{
+                      transform: "translateY(0)",
+                    }}
+                    transition="all 0.2s ease"
+                    fontWeight="semibold"
+                    borderRadius="md"
+                  >
+                    Registrarse
+                  </Button>
+                </>
+              ) : (
+                <>
+                  <Text color="white" fontSize="sm" fontWeight="medium">
+                    Hola, {userName || "Usuario"}
+                  </Text>
+                  <Button
+                    variant="ghost"
+                    color="white"
+                    onClick={() => {
+                      logout();
+                      navigate("/");
+                      toaster.create({
+                        title: "Sesión cerrada",
+                        description: "Has cerrado sesión correctamente",
+                        type: "success",
+                        duration: 2000,
+                      });
+                    }}
+                    _hover={{
+                      bg: "whiteAlpha.200",
+                      color: "brand.100",
+                    }}
+                    _active={{
+                      bg: "whiteAlpha.300",
+                    }}
+                    transition="all 0.2s ease"
+                    fontWeight="medium"
+                  >
+                    Cerrar Sesión
+                  </Button>
+                </>
+              )}
             </>
           )}
 
           {/* Mobile Auth Button - Shows user icon on mobile */}
           {isMobile && (
-            <IconButton
-              aria-label="Iniciar sesión"
-              variant="ghost"
-              color="white"
-              onClick={() => navigate("/login")}
-              _hover={{
-                bg: "whiteAlpha.200",
-                color: "brand.100",
-              }}
-            >
-              <Icon as={FaUser} boxSize={5} />
-            </IconButton>
+            <>
+              {!isAuthenticated ? (
+                <IconButton
+                  aria-label="Iniciar sesión"
+                  variant="ghost"
+                  color="white"
+                  onClick={() => navigate("/login")}
+                  _hover={{
+                    bg: "whiteAlpha.200",
+                    color: "brand.100",
+                  }}
+                >
+                  <Icon as={FaUser} boxSize={5} />
+                </IconButton>
+              ) : (
+                <HStack gap={2}>
+                  <Text color="white" fontSize="xs" fontWeight="medium">
+                    Hola, {userName || "Usuario"}
+                  </Text>
+                  <Button
+                    variant="ghost"
+                    color="white"
+                    size="sm"
+                    onClick={() => {
+                      logout();
+                      navigate("/");
+                      toaster.create({
+                        title: "Sesión cerrada",
+                        description: "Has cerrado sesión correctamente",
+                        type: "success",
+                        duration: 2000,
+                      });
+                    }}
+                    _hover={{
+                      bg: "whiteAlpha.200",
+                      color: "brand.100",
+                    }}
+                    fontSize="xs"
+                  >
+                    Salir
+                  </Button>
+                </HStack>
+              )}
+            </>
           )}
 
           {/* Cart Icon */}
