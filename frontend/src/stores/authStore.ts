@@ -28,11 +28,22 @@ export const useAuthStore = create<AuthState>()(
 
       login: async (email: string, password: string) => {
         const response = await authService.login({ email, password });
-        const role = response.role || (response.admin ? "admin" : "user");
+        
+        // El backend puede devolver 'user' o 'customer'
+        const userData = (response as any).user || (response as any).customer || null;
+        const adminData = response.admin || null;
+        
+        // Mapear 'customer' a 'user' para el tipo UserRole
+        let role: UserRole = "user";
+        if (response.role === "admin") {
+          role = "admin";
+        } else if ((response as any).role === "customer") {
+          role = "user";
+        }
         
         set({
-          admin: response.admin || null,
-          user: response.user || null,
+          admin: adminData,
+          user: userData,
           role: role,
           token: response.token,
           isAuthenticated: true,
@@ -41,11 +52,22 @@ export const useAuthStore = create<AuthState>()(
       
       signup: async (name: string, email: string, password: string) => {
         const response = await authService.signup({ name, email, password });
-        const role = response.role || (response.admin ? "admin" : "user");
+        
+        // El backend puede devolver 'user' o 'customer'
+        const userData = (response as any).user || (response as any).customer || null;
+        const adminData = response.admin || null;
+        
+        // Mapear 'customer' a 'user' para el tipo UserRole
+        let role: UserRole = "user";
+        if (response.role === "admin") {
+          role = "admin";
+        } else if ((response as any).role === "customer") {
+          role = "user";
+        }
         
         set({
-          admin: response.admin || null,
-          user: response.user || null,
+          admin: adminData,
+          user: userData,
           role: role,
           token: response.token,
           isAuthenticated: true,
