@@ -10,12 +10,13 @@ import {
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import type { ChangeEvent } from "react";
-import { authService } from "../../../services/authService";
+import { useAuthStore } from "../../../stores/authStore";
 import { toaster } from "../../../app/AppProvider";
 import type { ApiError } from "../../../types";
 
 export function RegisterPage() {
   const navigate = useNavigate();
+  const signup = useAuthStore((state) => state.signup);
 
   const [formData, setFormData] = useState({
     name: "",
@@ -88,11 +89,7 @@ export function RegisterPage() {
     setIsLoading(true);
 
     try {
-      await authService.signup({
-        name: formData.name,
-        email: formData.email,
-        password: formData.password,
-      });
+      await signup(formData.name, formData.email, formData.password);
 
       toaster.create({
         title: "¡Registro exitoso!",
