@@ -28,7 +28,7 @@ interface AuthResponse {
 export const authService = {
   // POST /api/auth/login
   login: async (credentials: LoginRequest): Promise<AuthResponse> => {
-    const response = await apiClient.post<AuthResponse>("/auth/login", credentials);
+    const response = await apiClient.post<AuthResponse>("/customers/login", credentials);
     // Guardar token automáticamente
     if (response.token) {
       saveAuthToken(response.token);
@@ -38,7 +38,7 @@ export const authService = {
 
   // POST /api/auth/signup
   signup: async (data: SignupRequest): Promise<AuthResponse> => {
-    const response = await apiClient.post<AuthResponse>("/auth/signup", data);
+    const response = await apiClient.post<AuthResponse>("/customers/signup", data);
     if (response.token) {
       saveAuthToken(response.token);
     }
