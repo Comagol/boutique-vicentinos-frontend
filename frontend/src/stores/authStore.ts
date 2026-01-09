@@ -10,6 +10,7 @@ interface AuthState {
   token: string | null;
   isAuthenticated: boolean;
   login: (email: string, password: string) => Promise<void>;
+  signup: (name: string, email: string, password: string) => Promise<void>;
   logout: () => void;
   initialize: () => void;
   isAdmin: () => boolean;
@@ -27,6 +28,19 @@ export const useAuthStore = create<AuthState>()(
 
       login: async (email: string, password: string) => {
         const response = await authService.login({ email, password });
+        const role = response.role || (response.admin ? "admin" : "user");
+        
+        set({
+          admin: response.admin || null,
+          user: response.user || null,
+          role: role,
+          token: response.token,
+          isAuthenticated: true,
+        });
+      },
+      
+      signup: async (name: string, email: string, password: string) => {
+        const response = await authService.signup({ name, email, password });
         const role = response.role || (response.admin ? "admin" : "user");
         
         set({
