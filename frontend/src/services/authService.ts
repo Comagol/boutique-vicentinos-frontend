@@ -37,6 +37,16 @@ export const authService = {
     return response as AuthResponse;
   },
 
+  // POST /api/auth/login (admin)
+  adminLogin: async (credentials: LoginRequest): Promise<AuthResponse> => {
+    const response = await apiClient.post<AuthResponse>("/auth/login", credentials);
+    // Guardar token automáticamente
+    if (response.token) {
+      saveAuthToken(response.token);
+    }
+    return response as AuthResponse;
+  },
+
   // POST /api/auth/signup
   signup: async (data: SignupRequest): Promise<AuthResponse> => {
     const response = await apiClient.post<AuthResponse>("/customers/signup", data);

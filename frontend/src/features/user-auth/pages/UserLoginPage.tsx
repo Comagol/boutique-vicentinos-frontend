@@ -18,7 +18,6 @@ import { getRedirectPathByRole } from "../../../utils/authRedirect";
 export function UserLoginPage() {
   const navigate = useNavigate();
   const login = useAuthStore((state) => state.login);
-  const role = useAuthStore((state) => state.role);
 
   const [formData, setFormData] = useState({
     email: "",

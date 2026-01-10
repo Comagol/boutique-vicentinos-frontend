@@ -17,7 +17,7 @@ import { getRedirectPathByRole } from "../../../utils/authRedirect";
 
 export function LoginPage() {
   const navigate = useNavigate();
-  const login = useAuthStore((state) => state.login);
+  const adminLogin = useAuthStore((state) => state.adminLogin);
 
   const [formData, setFormData] = useState({
     email: "",
@@ -65,7 +65,7 @@ export function LoginPage() {
     setIsLoading(true);
 
     try {
-      await login(formData.email, formData.password);
+      await adminLogin(formData.email, formData.password);
 
       // Obtener el rol actualizado después del login
       const currentRole = useAuthStore.getState().role;

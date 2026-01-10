@@ -10,6 +10,7 @@ interface AuthState {
   token: string | null;
   isAuthenticated: boolean;
   login: (email: string, password: string) => Promise<void>;
+  adminLogin: (email: string, password: string) => Promise<void>;
   signup: (name: string, email: string, password: string) => Promise<void>;
   logout: () => void;
   initialize: () => void;
@@ -50,6 +51,28 @@ export const useAuthStore = create<AuthState>()(
         });
       },
       
+      adminLogin: async (email: string, password: string) => {
+        const response = await authService.adminLogin({ email, password });
+        
+        // El backend puede devolver 'user' o 'customer' (aunque para admin debería ser null)
+        const userData = (response as any).user || (response as any).customer || null;
+        const adminData = response.admin || null;
+        
+        // Para admin, el rol siempre será "admin"
+        let role: UserRole = "admin";
+        if (response.role === "admin") {
+          role = "admin";
+        }
+        
+        set({
+          admin: adminData,
+          user: userData,
+          role: role,
+          token: response.token,
+          isAuthenticated: true,
+        });
+      },
+
       signup: async (name: string, email: string, password: string) => {
         const response = await authService.signup({ name, email, password });
         
