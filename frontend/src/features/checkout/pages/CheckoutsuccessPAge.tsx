@@ -8,7 +8,8 @@ import {
   Button,
   Icon,
 } from "@chakra-ui/react";
-import { useLocation, useNavigate, Link } from "react-router-dom";
+import { useLocation, useNavigate, Link, useSearchParams } from "react-router-dom";
+import { useEffect } from "react";
 import { FaCheckCircle, FaMoneyBillWave, FaCreditCard } from "react-icons/fa";
 
 interface CheckoutSuccessState {
@@ -20,15 +21,30 @@ interface CheckoutSuccessState {
 export function CheckoutSuccessPage() {
   const location = useLocation();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const state = location.state as CheckoutSuccessState | null;
 
-  // Si no hay estado (navegación directa), redirigir al catálogo
-  if (!state || !state.orderNumber) {
-    navigate("/");
+  // Obtener orderNumber de diferentes fuentes:
+  // 1. Del state (navegación interna)
+  // 2. Del localStorage (retorno de Mercado Pago)
+  // 3. De los parámetros de la URL (si Mercado Pago los pasa)
+  const orderNumberFromState = state?.orderNumber;
+  const orderNumberFromStorage = localStorage.getItem("lastOrderNumber");
+  const orderNumberFromUrl = searchParams.get("orderNumber");
+  
+  const orderNumber = orderNumberFromState || orderNumberFromUrl || orderNumberFromStorage;
+  const paymentMethod = state?.paymentMethod || "mercadopago"; // Si viene de Mercado Pago, asumimos que es mercadopago
+
+  // Si no hay orderNumber en ningún lugar, redirigir al catálogo
+  useEffect(() => {
+    if (!orderNumber) {
+      navigate("/");
+    }
+  }, [orderNumber, navigate]);
+
+  if (!orderNumber) {
     return null;
   }
-
-  const { orderNumber, paymentMethod } = state;
 
   return (
     <Box py={12} bg="bg.surface" minH="calc(100vh - 200px)">
