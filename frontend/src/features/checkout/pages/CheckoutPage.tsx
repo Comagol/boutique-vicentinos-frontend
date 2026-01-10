@@ -6,9 +6,10 @@ import {
   Button,
   Heading,
 } from "@chakra-ui/react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useCartStore } from "../../../stores/cartStore";
+import { useAuthStore } from "../../../stores/authStore";
 import { ordersService } from "../../../services/ordersService";
 import { toaster } from "../../../app/AppProvider";
 import type { CustomerInfo, ApiError } from "../../../types";
@@ -19,10 +20,29 @@ import { PaymentOptions } from "../components/PaymentOptions";
 export function CheckoutPage() {
   const navigate = useNavigate();
   const { items, clear, getTotal } = useCartStore();
+  const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
+  const user = useAuthStore((state) => state.user);
+  const admin = useAuthStore((state) => state.admin);
+  const role = useAuthStore((state) => state.role);
+  
   const [customerInfo, setCustomerInfo] = useState<CustomerInfo | null>(null);
   const [paymentMethod, setPaymentMethod] = useState<string>("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const total = getTotal();
+
+  // Pre-llenar formulario con datos del usuario autenticado
+  useEffect(() => {
+    if (isAuthenticated) {
+      const currentUser = role === "admin" ? admin : user;
+      if (currentUser) {
+        setCustomerInfo({
+          name: currentUser.name || "",
+          email: currentUser.email || "",
+          phone: "",
+        });
+      }
+    }
+  }, [isAuthenticated, user, admin, role]);
 
   const handleSubmit = async () => {
     if (!customerInfo || !paymentMethod) {

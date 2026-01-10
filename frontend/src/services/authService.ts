@@ -21,7 +21,7 @@ interface AuthResponse {
   message: string;
   admin?: AdminUser;
   user?: RegularUser;
-  customer?: RegularUser; // El backend puede devolver 'customer' en lugar de 'user'
+  customer?: RegularUser;
   role: UserRole;
   token: string;
 }

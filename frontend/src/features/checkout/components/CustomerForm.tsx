@@ -5,7 +5,7 @@ import {
   Heading,
   Text,
 } from "@chakra-ui/react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import type { ChangeEvent } from "react";
 import type { CustomerInfo } from "../../../types";
 
@@ -23,6 +23,17 @@ export function CustomerForm({
     email: customerInfo?.email || "",
     phone: customerInfo?.phone || "",
   });
+
+  // Sincronizar el formulario cuando customerInfo cambie desde el padre
+  useEffect(() => {
+    if (customerInfo) {
+      setFormData({
+        name: customerInfo.name || "",
+        email: customerInfo.email || "",
+        phone: customerInfo.phone || "",
+      });
+    }
+  }, [customerInfo]);
 
   const [errors, setErrors] = useState<{
     name?: string;
