@@ -9,16 +9,19 @@ import {
   useBreakpointValue,
   Icon,
 } from "@chakra-ui/react";
-import { useCartStore } from "../stores/cartStore";
+import { useCartStore, selectCartCount } from "../stores/cartStore";
 import { useAuthStore } from "../stores/authStore";
 import { FaShoppingCart, FaUser } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import { toaster } from "../app/AppProvider";
 import { useState, useEffect } from "react";
+import { CartDrawer } from "./CartDrawer";
 
 export function Navbar() {
-  const itemCount = useCartStore((s) => s.getItemCount());
+  const itemCount = useCartStore(selectCartCount);
   const items = useCartStore((s) => s.items);
+  const isCartOpen = useCartStore((s) => s.isDrawerOpen);
+  const setIsCartOpen = useCartStore((s) => s.setDrawerOpen);
   const navigate = useNavigate();
   const [prevItemCount, setPrevItemCount] = useState(itemCount);
   const [isCartAnimating, setIsCartAnimating] = useState(false);
@@ -35,16 +38,7 @@ export function Navbar() {
   }, [itemCount, prevItemCount]);
 
   const handleCartClick = () => {
-    if (items.length === 0) {
-      toaster.create({
-        title: "Carrito vacío",
-        description: "Agrega productos al carrito para continuar",
-        type: "warning",
-        duration: 2000,
-      });
-      return;
-    }
-    navigate("/checkout");
+    setIsCartOpen(true);
   };
 
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
@@ -265,6 +259,7 @@ export function Navbar() {
           </Box>
         </HStack>
       </Flex>
+      <CartDrawer open={isCartOpen} onOpenChange={(e) => setIsCartOpen(e.open)} />
     </Box>
   );
 }

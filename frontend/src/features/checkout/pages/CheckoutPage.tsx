@@ -8,7 +8,7 @@ import {
 } from "@chakra-ui/react";
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { useCartStore } from "../../../stores/cartStore";
+import { useCartStore, selectCartTotal } from "../../../stores/cartStore";
 import { useAuthStore } from "../../../stores/authStore";
 import { ordersService } from "../../../services/ordersService";
 import { toaster } from "../../../app/AppProvider";
@@ -19,16 +19,18 @@ import { PaymentOptions } from "../components/PaymentOptions";
 
 export function CheckoutPage() {
   const navigate = useNavigate();
-  const { items, clear, getTotal } = useCartStore();
+  const items = useCartStore((state) => state.items);
+  const clear = useCartStore((state) => state.clear);
+  const total = useCartStore(selectCartTotal);
+  
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
   const user = useAuthStore((state) => state.user);
   const admin = useAuthStore((state) => state.admin);
   const role = useAuthStore((state) => state.role);
-  
+
   const [customerInfo, setCustomerInfo] = useState<CustomerInfo | null>(null);
   const [paymentMethod, setPaymentMethod] = useState<string>("");
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const total = getTotal();
 
   // Pre-llenar formulario con datos del usuario autenticado
   useEffect(() => {

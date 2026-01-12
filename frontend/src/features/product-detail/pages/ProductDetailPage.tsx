@@ -121,14 +121,23 @@ const availableSizes = sizesArray.filter((sizeObj) => {
     }
 
     // Agregar al carrito
-    addItem(product, selectedSize, selectedColor || product.baseColor || "", quantity);
+    const success = addItem(product, selectedSize, selectedColor || product.baseColor || "", quantity);
 
-    toaster.create({
-        title: "Producto agregado al carrito",
-        description: "Producto agregado al carrito correctamente",
+    if (success) {
+      toaster.create({
+        title: "Producto agregado",
+        description: "El producto se añadió al carrito correctamente",
         type: "success",
         duration: 2000,
       });
+    } else {
+      toaster.create({
+        title: "Stock insuficiente",
+        description: "No hay suficiente stock disponible para la cantidad seleccionada",
+        type: "error",
+        duration: 2000,
+      });
+    }
   };
 
   if (isLoading) {

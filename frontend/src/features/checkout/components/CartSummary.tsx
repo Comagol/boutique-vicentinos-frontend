@@ -10,6 +10,7 @@ import {
 import { Link } from "react-router-dom";
 import { useCartStore } from "../../../stores/cartStore";
 import type { CartItem } from "../../../types";
+import { toaster } from "../../../app/AppProvider";
 
 interface CartSummaryProps {
   items: CartItem[];
@@ -17,7 +18,19 @@ interface CartSummaryProps {
 }
 
 export function CartSummary({ items, total }: CartSummaryProps) {
-  const { removeItem, updateQuantity } = useCartStore();
+  const removeItem = useCartStore((s) => s.removeItem);
+  const updateQuantity = useCartStore((s) => s.updateQuantity);
+
+  const handleUpdateQuantity = (productId: string, size: string, color: string, newQty: number) => {
+    const success = updateQuantity(productId, size, color, newQty);
+    if (!success) {
+      toaster.create({
+        title: "Límite alcanzado",
+        description: "No hay más stock disponible para este producto",
+        type: "error",
+      });
+    }
+  };
 
   return (
     <Box
@@ -66,11 +79,11 @@ export function CartSummary({ items, total }: CartSummaryProps) {
                         size="xs"
                         variant="ghost"
                         onClick={() =>
-                          updateQuantity(
+                          handleUpdateQuantity(
                             item.product.id,
                             item.size,
                             item.color,
-                            Math.max(0, item.quantity - 1)
+                            item.quantity - 1
                           )
                         }
                       >
@@ -80,7 +93,7 @@ export function CartSummary({ items, total }: CartSummaryProps) {
                         size="xs"
                         variant="ghost"
                         onClick={() =>
-                          updateQuantity(
+                          handleUpdateQuantity(
                             item.product.id,
                             item.size,
                             item.color,

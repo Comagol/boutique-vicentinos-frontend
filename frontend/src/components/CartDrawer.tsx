@@ -9,10 +9,12 @@ import {
   Separator,
   Button,
   Drawer,
+  Portal, // Importante: necesitamos el Portal
 } from "@chakra-ui/react";
-import { useCartStore } from "../stores/cartStore";
-import { FiTrash2, FiPlus, FiMinus, FiShoppingBag } from "react-icons/fi";
+import { useCartStore, selectCartTotal } from "../stores/cartStore";
+import { FiTrash2, FiPlus, FiMinus, FiShoppingBag, FiX } from "react-icons/fi";
 import { useNavigate } from "react-router-dom";
+import { toaster } from "../app/AppProvider";
 
 interface CartDrawerProps {
   open: boolean;
@@ -20,161 +22,241 @@ interface CartDrawerProps {
 }
 
 export function CartDrawer({ open, onOpenChange }: CartDrawerProps) {
-  const { items, updateQuantity, removeItem, getTotal } = useCartStore();
+  const items = useCartStore((state) => state.items);
+  const total = useCartStore(selectCartTotal);
+  const updateQuantity = useCartStore((state) => state.updateQuantity);
+  const removeItem = useCartStore((state) => state.removeItem);
   const navigate = useNavigate();
 
-  const handleCheckout = () => {
-    onOpenChange({ open: false });
-    navigate("/checkout");
+  const handleUpdateQuantity = (productId: string, size: string, color: string, newQty: number) => {
+    const success = updateQuantity(productId, size, color, newQty);
+    if (!success) {
+      toaster.create({
+        title: "Límite alcanzado",
+        description: "No hay más stock disponible para este producto",
+        type: "error",
+      });
+    }
   };
 
   return (
-    <Drawer.Root open={open} onOpenChange={onOpenChange} size="md">
-      <Drawer.Backdrop />
-      <Drawer.Content bg="white" shadow="2xl">
-        <Drawer.Header borderBottomWidth="1px" p={4}>
-          <Flex justify="space-between" align="center">
-            <HStack gap={2}>
-              <FiShoppingBag />
-              <Drawer.Title fontSize="xl" fontWeight="bold">
-                Tu Carrito
-              </Drawer.Title>
-            </HStack>
-            <Drawer.CloseTrigger position="static" />
-          </Flex>
-        </Drawer.Header>
-
-        <Drawer.Body p={0}>
-          {items.length === 0 ? (
-            <Flex
-              direction="column"
-              align="center"
-              justify="center"
-              h="100%"
-              p={8}
-              textAlign="center"
+    <Drawer.Root 
+      open={open} 
+      onOpenChange={onOpenChange}
+    >
+      <Portal> {/* El Portal saca el componente fuera del Navbar */}
+        <Drawer.Backdrop />
+        <Drawer.Positioner> {/* El Positioner ayuda a ubicarlo correctamente */}
+          <Drawer.Content 
+            bg="white" 
+            h="100dvh" // Usamos dvh para mejor soporte en móviles
+            w={{ base: "100%", md: "420px" }} 
+            boxShadow="2xl"
+            position="fixed"
+            right={0}
+            top={0}
+          >
+            <Drawer.Header 
+              borderBottomWidth="1px" 
+              p={5} 
+              bg="white"
             >
-              <Box color="gray.300" mb={4}>
-                <FiShoppingBag size={64} />
-              </Box>
-              <Text fontSize="lg" fontWeight="medium" color="gray.500">
-                Tu carrito está vacío
-              </Text>
-              <Text fontSize="sm" color="gray.400" mt={2}>
-                ¡Agrega algunos productos para comenzar tu compra!
-              </Text>
-            </Flex>
-          ) : (
-            <VStack gap={0} align="stretch">
-              {items.map((item) => (
-                <Box key={`${item.product.id}-${item.size}-${item.color}`}>
-                  <Flex p={4} gap={4} align="center">
-                    {/* Miniatura del producto */}
-                    <Box
-                      w="80px"
-                      h="80px"
-                      borderRadius="md"
-                      overflow="hidden"
-                      flexShrink={0}
-                      bg="gray.50"
-                    >
-                      <Image
-                        src={item.product.images[0] || "/placeholder-image.jpg"}
-                        alt={item.product.name}
-                        w="100%"
-                        h="100%"
-                        objectFit="cover"
-                      />
-                    </Box>
+              <Flex justify="space-between" align="center">
+                <HStack gap={3}>
+                  <Box color="brand.600">
+                    <FiShoppingBag size={24} />
+                  </Box>
+                  <Drawer.Title fontSize="xl" fontWeight="bold" color="gray.800">
+                    Tu Carrito
+                  </Drawer.Title>
+                </HStack>
+                <IconButton
+                  variant="ghost"
+                  size="md"
+                  onClick={() => onOpenChange({ open: false })}
+                  color="gray.500"
+                  _hover={{ bg: "gray.100", color: "brand.500" }}
+                >
+                  <FiX size={20} />
+                </IconButton>
+              </Flex>
+            </Drawer.Header>
 
-                    {/* Info del producto */}
-                    <VStack align="start" gap={1} flex="1">
-                      <Text fontWeight="semibold" fontSize="sm">
-                        {item.product.name}
-                      </Text>
-                      <Text fontSize="xs" color="gray.500">
-                        Talla: {item.size} | Color: {item.color}
-                      </Text>
-                      <Text fontWeight="bold" color="brand.600">
-                        ${(item.product.discountPrice || item.product.price).toLocaleString("es-AR")}
-                      </Text>
+            <Drawer.Body 
+              p={0} 
+              overflowY="auto" 
+              flex="1"
+              css={{
+                "&::-webkit-scrollbar": {
+                  width: "4px",
+                },
+                "&::-webkit-scrollbar-track": {
+                  background: "transparent",
+                },
+                "&::-webkit-scrollbar-thumb": {
+                  background: "#CBD5E0",
+                  borderRadius: "10px",
+                },
+              }}
+            >
+              {items.length === 0 ? (
+                <Flex
+                  direction="column"
+                  align="center"
+                  justify="center"
+                  h="70vh"
+                  p={8}
+                  textAlign="center"
+                >
+                  <Box color="gray.100" mb={6}>
+                    <FiShoppingBag size={100} />
+                  </Box>
+                  <Text fontSize="2xl" fontWeight="bold" color="gray.700">
+                    El carrito está vacío
+                  </Text>
+                  <Text fontSize="md" color="gray.500" mt={3} maxW="280px">
+                    ¿Aún no te decidiste? Tenemos muchas opciones para vos.
+                  </Text>
+                  <Button
+                    mt={8}
+                    bg="brand.500"
+                    color="white"
+                    px={8}
+                    rounded="full"
+                    onClick={() => onOpenChange({ open: false })}
+                  >
+                    Explorar productos
+                  </Button>
+                </Flex>
+              ) : (
+                <VStack gap={0} align="stretch" p={2}>
+                  {items.map((item) => (
+                    <Box key={`${item.product.id}-${item.size}-${item.color}`} w="100%">
+                      <Flex p={4} gap={4} align="center" position="relative">
+                        {/* Imagen con sombra sutil */}
+                        <Box
+                          w="90px"
+                          h="90px"
+                          borderRadius="xl"
+                          overflow="hidden"
+                          flexShrink={0}
+                          boxShadow="sm"
+                          border="1px solid"
+                          borderColor="gray.100"
+                        >
+                          <Image
+                            src={item.product.images[0] || "/placeholder-image.jpg"}
+                            alt={item.product.name}
+                            w="100%"
+                            h="100%"
+                            objectFit="cover"
+                          />
+                        </Box>
 
-                      {/* Controles de cantidad */}
-                      <HStack gap={3} mt={1}>
-                        <HStack gap={0} border="1px solid" borderColor="gray.200" borderRadius="md">
-                          <IconButton
-                            aria-label="Restar"
-                            size="xs"
-                            variant="ghost"
-                            onClick={() => updateQuantity(item.product.id, item.size, item.color, item.quantity - 1)}
+                        {/* Contenido info */}
+                        <VStack align="start" gap={0} flex="1">
+                          <Text 
+                            fontWeight="bold" 
+                            fontSize="md" 
+                            color="gray.800" 
+                            lineHeight="shorter"
+                            mb={1}
                           >
-                            <FiMinus size={10} />
-                          </IconButton>
-                          <Text fontSize="xs" minW="24px" textAlign="center" fontWeight="bold">
-                            {item.quantity}
+                            {item.product.name}
                           </Text>
-                          <IconButton
-                            aria-label="Sumar"
-                            size="xs"
-                            variant="ghost"
-                            onClick={() => updateQuantity(item.product.id, item.size, item.color, item.quantity + 1)}
-                          >
-                            <FiPlus size={10} />
-                          </IconButton>
-                        </HStack>
-                        
+                          <Text fontSize="xs" color="brand.500" fontWeight="extrabold" letterSpacing="wider" mb={2}>
+                            {item.size.toUpperCase()} {item.color && `| ${item.color.toUpperCase()}`}
+                          </Text>
+                          
+                          <Flex w="100%" justify="space-between" align="center">
+                            <Text fontWeight="800" fontSize="xl" color="gray.900">
+                              ${(item.product.discountPrice || item.product.price).toLocaleString("es-AR")}
+                            </Text>
+                            
+                            <HStack gap={1} bg="gray.100" borderRadius="full" p={1}>
+                                <IconButton
+                                  aria-label="Restar"
+                                  size="xs"
+                                  variant="ghost"
+                                  rounded="full"
+                                  onClick={() => handleUpdateQuantity(item.product.id, item.size, item.color, item.quantity - 1)}
+                                >
+                                  <FiMinus size={10} />
+                                </IconButton>
+                                <Text fontSize="sm" minW="25px" textAlign="center" fontWeight="bold">
+                                  {item.quantity}
+                                </Text>
+                                <IconButton
+                                  aria-label="Sumar"
+                                  size="xs"
+                                  variant="ghost"
+                                  rounded="full"
+                                  onClick={() => handleUpdateQuantity(item.product.id, item.size, item.color, item.quantity + 1)}
+                                >
+                                  <FiPlus size={10} />
+                                </IconButton>
+                            </HStack>
+                          </Flex>
+                        </VStack>
+
                         <IconButton
                           aria-label="Eliminar"
-                          size="xs"
-                          variant="ghost"
-                          color="red.400"
+                          size="sm"
+                          variant="subtle"
+                          colorPalette="red"
+                          color="red.600"
+                          rounded="full"
                           onClick={() => removeItem(item.product.id, item.size, item.color)}
+                          position="absolute"
+                          top={2}
+                          right={2}
                         >
-                          <FiTrash2 size={14} />
+                          <FiTrash2 size={16} />
                         </IconButton>
-                      </HStack>
-                    </VStack>
-                  </Flex>
-                  <Separator borderColor="gray.100" />
-                </Box>
-              ))}
-            </VStack>
-          )}
-        </Drawer.Body>
+                      </Flex>
+                      <Separator borderColor="gray.100" mx={4} />
+                    </Box>
+                  ))}
+                </VStack>
+              )}
+            </Drawer.Body>
 
-        {items.length > 0 && (
-          <Drawer.Footer
-            display="block"
-            borderTopWidth="1px"
-            p={6}
-            bg="gray.50"
-          >
-            <VStack gap={4} align="stretch">
-              <Flex justify="space-between" align="center">
-                <Text fontSize="md" color="gray.600">Total estimado</Text>
-                <Text fontSize="xl" fontWeight="bold" color="brand.700">
-                  ${getTotal().toLocaleString("es-AR")}
-                </Text>
-              </Flex>
-              <Button
-                size="lg"
-                w="100%"
-                bg="brand.500"
-                color="white"
-                _hover={{ bg: "brand.600" }}
-                onClick={handleCheckout}
-                fontWeight="bold"
-                boxShadow="md"
+            {items.length > 0 && (
+              <Drawer.Footer
+                display="block"
+                p={6}
+                bg="white"
+                boxShadow="0 -10px 20px -5px rgba(0,0,0,0.05)"
               >
-                Finalizar Compra
-              </Button>
-              <Text fontSize="xs" color="gray.400" textAlign="center">
-                Impuestos y envíos calculados en el pago
-              </Text>
-            </VStack>
-          </Drawer.Footer>
-        )}
-      </Drawer.Content>
+                <VStack gap={4} align="stretch">
+                  <Flex justify="space-between" align="baseline">
+                    <Text fontSize="sm" color="gray.500" fontWeight="bold">TOTAL</Text>
+                    <Text fontSize="3xl" fontWeight="900" color="brand.700">
+                      ${total.toLocaleString("es-AR")}
+                    </Text>
+                  </Flex>
+                  <Button
+                    size="xl"
+                    w="100%"
+                    bg="brand.500"
+                    color="white"
+                    _hover={{ bg: "brand.600", transform: "translateY(-2px)" }}
+                    _active={{ transform: "translateY(0)" }}
+                    onClick={() => navigate("/checkout")}
+                    fontWeight="extrabold"
+                    fontSize="lg"
+                    h="60px"
+                    rounded="xl"
+                    boxShadow="0 8px 20px -6px rgba(0,0,0,0.2)"
+                  >
+                    FINALIZAR COMPRA
+                  </Button>
+                </VStack>
+              </Drawer.Footer>
+            )}
+          </Drawer.Content>
+        </Drawer.Positioner>
+      </Portal>
     </Drawer.Root>
   );
 }
