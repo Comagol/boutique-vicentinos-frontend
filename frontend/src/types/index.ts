@@ -132,7 +132,7 @@ export interface ApiError {
   message: string;
 }
 
-export interface ApiSuccess<T> {
+export interface ApiSuccess {
   message: string;
   [key: string]: any;
 }
