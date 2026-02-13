@@ -28,15 +28,17 @@ export function AdminOrdersPage() {
     isError,
     refetch,
   } = useQuery({
-    queryKey: ["admin-orders", selectedStatus],
-    queryFn: () =>
-      ordersService.getOrders(
-        selectedStatus === "all" ? undefined : { status: selectedStatus }
-      ),
+    queryKey: ["admin-orders"], // No dependemos de selectedStatus para la query
+    queryFn: () => ordersService.getOrders(),
   });
 
-  // Filtrar por término de búsqueda (número de orden, email, nombre)
+  // Filtrar por estado y por término de búsqueda (número de orden, email, nombre)
   const filteredOrders = orders.filter((order) => {
+    // 1. Filtro por estado
+    const matchesStatus = selectedStatus === "all" || order.status === selectedStatus;
+    if (!matchesStatus) return false;
+
+    // 2. Filtro por búsqueda
     if (!searchTerm) return true;
     
     const searchLower = searchTerm.toLowerCase();
