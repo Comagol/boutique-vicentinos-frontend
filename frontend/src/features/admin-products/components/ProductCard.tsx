@@ -76,24 +76,21 @@ export function ProductCard({ product, onRefresh }: ProductCardProps) {
     }
   };
 
-  // Calcular stock total
-  let stockArray: any[] = [];
-  if (Array.isArray(product.stock)) {
-    stockArray = product.stock;
-  } else if (typeof product.stock === "string") {
+  // Calcular stock total a través de todas las variantes
+  let variantsArray: any[] = [];
+  if (Array.isArray(product.variants)) {
+    variantsArray = product.variants;
+  } else if (typeof product.variants === "string") {
     try {
-      const parsed = JSON.parse(product.stock);
-      stockArray = Array.isArray(parsed) ? parsed : [];
+      variantsArray = JSON.parse(product.variants);
     } catch (e) {
-      stockArray = [];
+      variantsArray = [];
     }
   }
 
-  const totalStock = stockArray.reduce(
-    (sum: number, s: any) => {
-      const quantity = typeof s.quantity === "number" ? s.quantity : Number(s.quantity) || 0;
-      return sum + quantity;
-    },
+  const totalStock = variantsArray.reduce(
+    (sum, variant) => 
+      sum + (variant.sizes || []).reduce((sSum: number, s: any) => sSum + (Number(s.quantity) || 0), 0),
     0
   );
 

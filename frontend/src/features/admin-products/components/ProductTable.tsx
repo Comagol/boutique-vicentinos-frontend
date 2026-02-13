@@ -130,31 +130,24 @@ export function ProductTable({ products, onRefresh }: ProductTableProps) {
           </Box>
           <Box as="tbody">
             {products.map((product) => {
-              // Asegurar que stock sea un array antes de usar reduce
-              // Puede venir como string JSON desde el backend
-              let stockArray: any[] = [];
-              if (Array.isArray(product.stock)) {
-                stockArray = product.stock;
-              } else if (typeof product.stock === 'string') {
+              // Calcular total de stock a través de todas las variantes
+              let variantsArray: any[] = [];
+              if (Array.isArray(product.variants)) {
+                variantsArray = product.variants;
+              } else if (typeof product.variants === "string") {
                 try {
-                  const parsed = JSON.parse(product.stock);
-                  stockArray = Array.isArray(parsed) ? parsed : [];
+                  variantsArray = JSON.parse(product.variants);
                 } catch (e) {
-                  stockArray = [];
+                  variantsArray = [];
                 }
-              } else if (product.stock) {
-                // Si es otro tipo de objeto, intentar convertirlo
-                stockArray = [];
               }
-              
-              // Calcular total, asegurándonos de que quantity sea un número
-              const totalStock = stockArray.reduce(
-                (sum: number, s: any) => {
-                  const quantity = typeof s.quantity === 'number' ? s.quantity : Number(s.quantity) || 0;
-                  return sum + quantity;
-                },
+
+              const totalStock = variantsArray.reduce(
+                (sum, variant) => 
+                  sum + (variant.sizes || []).reduce((sSum: number, s: any) => sSum + (Number(s.quantity) || 0), 0),
                 0
               );
+              
               const displayPrice = product.discountPrice || product.price;
               const imagesArray = Array.isArray(product.images) ? product.images : [];
 

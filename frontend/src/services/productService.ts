@@ -1,5 +1,5 @@
 import { apiClient } from "./apiClient";
-import type { Product, ProductCategory, ProductSize, StockInfo } from "../types";
+import type { Product, ProductCategory, ProductVariant } from "../types";
 
 interface CreateProductInput {
   name: string;
@@ -9,10 +9,7 @@ interface CreateProductInput {
   tags: string[];
   price: number;
   discountPrice?: number;
-  images: File[];
-  sizes: ProductSize[];
-  colors: string[];
-  stock: StockInfo[];
+  variants: ProductVariant[];
 }
 
 interface ProductsResponse {
@@ -53,27 +50,14 @@ export const productsService = {
   createProduct: async (productData: CreateProductInput, images?: File[]): Promise<Product> => {
     const formData = new FormData();
 
-    // Limpiar el stock: asegurar que color no sea undefined
-    const cleanedStock = productData.stock?.map(item => ({
-      size: item.size,
-      color: item.color, 
-      quantity: item.quantity,
-    })) || [];
-
-    // Preparar datos limpios
-    const cleanedData = {
-      ...productData,
-      stock: cleanedStock,
-    };
-
     // Agregar campos del producto al FormData
-    Object.entries(cleanedData).forEach(([key, value]) => {
-      if (key === "images") return; // Las imágenes se manejan aparte
+    Object.entries(productData).forEach(([key, value]) => {
+      if (value === undefined || value === null) return;
       
       if (Array.isArray(value)) {
-        // Para arrays, enviarlos como JSON string
+        // Para arrays (tags, variants), enviarlos como JSON string
         formData.append(key, JSON.stringify(value));
-      } else if (typeof value === "object" && value !== null) {
+      } else if (typeof value === "object") {
         formData.append(key, JSON.stringify(value));
       } else {
         formData.append(key, String(value));
@@ -101,8 +85,6 @@ export const productsService = {
 
     // Agregar campos actualizados
     Object.entries(productData).forEach(([key, value]) => {
-      if (key === "images") return;
-      
       if (value !== undefined && value !== null) {
         if (Array.isArray(value)) {
           formData.append(key, JSON.stringify(value));

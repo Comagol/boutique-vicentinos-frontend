@@ -33,12 +33,19 @@ export const selectCartCount = (state: CartState) =>
  * Obtiene el stock disponible para una variante específica de un producto
  */
 export const getAvailableStock = (product: Product, size: string, color?: string) => {
-  const stockItem = product.stock.find(
-    (s) => 
-      s.size === size && 
-      (color ? s.color === color : true)
-  );
-  return stockItem?.quantity || 0;
+  if (!color) {
+    // Si no hay color, sumamos stock de esa talla en todas las variantes
+    return product.variants.reduce((total, variant) => {
+      const sizeObj = variant.sizes.find(s => s.size === size);
+      return total + (sizeObj?.quantity || 0);
+    }, 0);
+  }
+
+  const variant = product.variants.find(v => v.color.toLowerCase() === color.toLowerCase());
+  if (!variant) return 0;
+
+  const sizeObj = variant.sizes.find(s => s.size === size);
+  return sizeObj?.quantity || 0;
 };
 
 // ================= STORE =================

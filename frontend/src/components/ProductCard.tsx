@@ -13,6 +13,13 @@ export function ProductCard({ product }: ProductCardProps) {
   const displayPrice = product.discountPrice || product.price;
   const hasDiscount = !!product.discountPrice;
 
+  // Calcular stock total a través de todas las variantes
+  const totalStock = (product.variants || []).reduce(
+    (sum, variant) => 
+      sum + (variant.sizes || []).reduce((sSum, s) => sSum + (Number(s.quantity) || 0), 0),
+    0
+  );
+
   const handleCardClick = () => {
     navigate(`/product/${product.id}`);
   };
@@ -98,9 +105,9 @@ export function ProductCard({ product }: ProductCardProps) {
               e.stopPropagation();
               navigate(`/product/${product.id}`);
             }}
-            disabled={!product.isActive || product.stock.length === 0}
+            disabled={!product.isActive || totalStock === 0}
           >
-            {product.isActive && product.stock.length > 0
+            {product.isActive && totalStock > 0
               ? "Ver Detalle"
               : "No disponible"}
           </CTAButton>

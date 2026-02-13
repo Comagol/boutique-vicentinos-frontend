@@ -1,33 +1,30 @@
 // ============== PRODUCTS =================
 
 export type ProductCategory =
-| "camisetas-rugby"
-| "camisetas-hockey"
-| "shorts-rugby"
-| "polleras-hockey"
-| "medias-hockey"
-| "medias-rugby"
-| "pantalones"
-| "shorts"
-| "buzos"
-| "gorras"
-| "camperas"
-| "camperon"
-| "bolsos"
-| "gorros"
-| "otros";
+| 'camisetas-rugby'
+| 'camisetas-hockey'
+| 'shorts-rugby'
+| 'polleras-hockey'
+| 'medias-rugby'
+| 'medias-hockey'
+| 'pantalones'
+| 'shorts'
+| 'buzos'
+| 'gorras'
+| 'camperas'
+| 'camperon'
+| 'bolsos'
+| 'gorros'
+| 'otros';
 
-export type SizeType = "adulto" | "infantil";
-
-export interface ProductSize {
+export interface VariantSize {
   size: string;
-  type: SizeType;
+  quantity: number;
 }
 
-export interface StockInfo {
-  size: string;
-  color?: string;
-  quantity: number;
+export interface ProductVariant {
+  color: string;
+  sizes: VariantSize[];
 }
 
 export interface Product {
@@ -36,13 +33,11 @@ export interface Product {
   description: string;
   category: ProductCategory;
   baseColor?: string;
+  variants: ProductVariant[];
   tags: string[];
   price: number;
   discountPrice?: number;
   images: string[];
-  sizes: ProductSize[];
-  colors: string[];
-  stock: StockInfo[];
   isActive: boolean;
   createdAt: string;
   updatedAt: string;
@@ -81,7 +76,7 @@ export interface OrderItem {
 export interface Order {
   id: string;
   orderNumber: string;
-  customer: CustomerInfo; // Nota: backend usa "customer" no "customerInfo"
+  customer: CustomerInfo;
   items: OrderItem[];
   status: OrderStatus;
   total: number;
@@ -96,7 +91,6 @@ export interface Order {
   expiresAt?: string;
 }
 
-// Respuesta del endpoint de estado de pago
 export interface PaymentStatusResponse {
   orderId: string;
   orderStatus: OrderStatus;
@@ -144,7 +138,6 @@ export interface ApiSuccess<T> {
 }
 
 // ======== CART Types (Solo frontend) ==========
-// elcarrito no se envia asi al backend se transforma a OrderItem[]
 export interface CartItem {
   product: Product;
   size: string;
